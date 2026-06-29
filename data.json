@@ -1,0 +1,88 @@
+{
+  "server": {
+    "name": "ProspEngine",
+    "icon": "https://cdn.discordapp.com/icons/1519266568847233075/f1acadad7c30e7cdd49efc9c2f3900f0.png?size=1024",
+    "member_count": 4
+  },
+  "season": {
+    "number": 2,
+    "start": "2026-06-24T12:03:08.721052+00:00"
+  },
+  "elo": {},
+  "season_stats": {
+    "1": {
+      "398137226023927819": {
+        "wins": 1,
+        "losses": 0,
+        "tournaments_played": 1,
+        "tournaments_won": 1
+      },
+      "1410619933850599586": {
+        "wins": 0,
+        "losses": 1,
+        "tournaments_played": 1,
+        "tournaments_won": 0
+      }
+    },
+    "2": {
+      "398137226023927819": {
+        "wins": 0,
+        "losses": 0,
+        "tournaments_played": 0,
+        "tournaments_won": 0
+      }
+    }
+  },
+  "levels": {},
+  "training_packs": [
+    {
+      "name": "wayton",
+      "code": "10493842",
+      "difficulty": "Expert",
+      "added_by": "398137226023927819",
+      "added_by_name": "Ks"
+    }
+  ],
+  "quotes": [
+    {
+      "quote": "Heel veel mensen snappen niks van Rocket League. Ze kijken wel, maar zien het niet",
+      "member_name": "Ks",
+      "member_id": "398137226023927819",
+      "added_by": "398137226023927819",
+      "date": "2026-06-26T18:37:52.177809+00:00"
+    }
+  ],
+  "birthdays": {
+    "398137226023927819": "15-07"
+  },
+  "members": {
+    "398137226023927819": {
+      "name": "Ks",
+      "avatar": "https://cdn.discordapp.com/avatars/398137226023927819/a68b9a9ff2697cc134919e6f889a8496.png?size=1024",
+      "rank": "Grand Champion II",
+      "elo": 1000,
+      "level": 0,
+      "xp": 0,
+      "joined": "2026-06-24T09:02:56.642000+00:00"
+    },
+    "443495646314496002": {
+      "name": "ItsFadedAway",
+      "avatar": "https://cdn.discordapp.com/avatars/443495646314496002/6a1c54081c08c34bcd0030a14a764a5d.png?size=1024",
+      "rank": "Grand Champion II",
+      "elo": 1000,
+      "level": 0,
+      "xp": 0,
+      "joined": "2026-06-24T10:47:49.199000+00:00"
+    },
+    "1410619933850599586": {
+      "name": "test",
+      "avatar": "https://cdn.discordapp.com/avatars/1410619933850599586/8d5251e6af735a24ee99600282bea284.png?size=1024",
+      "rank": "Diamond II",
+      "elo": 1000,
+      "level": 0,
+      "xp": 0,
+      "joined": "2026-06-24T21:31:14.527000+00:00"
+    }
+  },
+  "last_updated": "2026-06-29T10:59:57.704135+00:00"
+}
