@@ -1,4 +1,5 @@
 const GITHUB_DATA_URL = "https://raw.githubusercontent.com/Kayolomolo/prospengine-dashboard/main/data.json";
+const NGROK_API_URL = "https://clarify-retrace-abrasion.ngrok-free.dev/api/data";
 const LOCAL_API_URL = "http://localhost:8080/api/data";
 
 let data = null;
@@ -45,6 +46,14 @@ async function fetchData() {
     // Try local API first (fastest when on same machine)
     try {
         const response = await fetch(LOCAL_API_URL);
+        data = await response.json();
+        renderAll();
+        return;
+    } catch (e) {}
+
+    // Try ngrok API
+    try {
+        const response = await fetch(NGROK_API_URL, { headers: { "ngrok-skip-browser-warning": "true" } });
         data = await response.json();
         renderAll();
         return;

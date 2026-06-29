@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8080";
+const API_BASE = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://clarify-retrace-abrasion.ngrok-free.dev";
 
 let adminToken = localStorage.getItem("prospengine_token") || null;
 
@@ -33,6 +33,7 @@ async function adminFetch(endpoint, method = "GET", body = null) {
         headers: {
             "Authorization": `Bearer ${adminToken}`,
             "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
         },
     };
     if (body) opts.body = JSON.stringify(body);
@@ -134,7 +135,7 @@ document.getElementById("admin-login-btn").addEventListener("click", async () =>
     try {
         const res = await fetch(API_BASE + "/api/login", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
             body: JSON.stringify({ password }),
         });
         const data = await res.json();
