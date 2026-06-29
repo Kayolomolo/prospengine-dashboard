@@ -78,6 +78,28 @@ async function loadSettings() {
         `;
     }
 
+    // Verification
+    const verify = settings.verification || {};
+    document.getElementById("verify-method").value = verify.method || "captcha";
+    document.getElementById("verify-length").value = verify.captcha_length ?? 6;
+    document.getElementById("verify-difficulty").value = verify.captcha_difficulty || "medium";
+    document.getElementById("verify-attempts").value = verify.max_attempts ?? 3;
+    document.getElementById("verify-timeout").value = verify.timeout_seconds ?? 300;
+
+    // Anti-Nuke
+    const antinuke = settings.antinuke || {};
+    document.getElementById("antinuke-enabled").checked = antinuke.enabled !== false;
+    document.getElementById("antinuke-ban-limit").value = antinuke.ban_limit ?? 2;
+    document.getElementById("antinuke-kick-limit").value = antinuke.kick_limit ?? 2;
+    document.getElementById("antinuke-channel-limit").value = antinuke.channel_delete_limit ?? 2;
+    document.getElementById("antinuke-role-limit").value = antinuke.role_delete_limit ?? 2;
+    document.getElementById("antinuke-punishment").value = antinuke.punishment || "ban";
+    const beast = antinuke.beast_mode || {};
+    document.getElementById("beast-enabled").checked = beast.enabled !== false;
+    document.getElementById("beast-score-limit").value = beast.score_limit ?? 25;
+    document.getElementById("beast-duration").value = beast.duration_minutes ?? 60;
+    document.getElementById("beast-punishment").value = beast.punishment || "clear_roles";
+
     // Weekly tournament
     const weekly = settings.weekly_tournament || {};
     document.getElementById("weekly-enabled").checked = weekly.enabled || false;
@@ -158,6 +180,43 @@ document.getElementById("admin-login-btn").addEventListener("click", async () =>
 
 document.getElementById("admin-password").addEventListener("keydown", (e) => {
     if (e.key === "Enter") document.getElementById("admin-login-btn").click();
+});
+
+// Save verification
+document.getElementById("save-verify-btn").addEventListener("click", async () => {
+    const verify = {
+        method: document.getElementById("verify-method").value,
+        captcha_length: parseInt(document.getElementById("verify-length").value),
+        captcha_difficulty: document.getElementById("verify-difficulty").value,
+        max_attempts: parseInt(document.getElementById("verify-attempts").value),
+        timeout_seconds: parseInt(document.getElementById("verify-timeout").value),
+    };
+    const result = await adminFetch("/api/verification", "POST", verify);
+    if (result && result.success) showToast("Verification settings saved!");
+});
+
+// Save anti-nuke
+document.getElementById("save-antinuke-btn").addEventListener("click", async () => {
+    const antinuke = {
+        enabled: document.getElementById("antinuke-enabled").checked,
+        ban_limit: parseInt(document.getElementById("antinuke-ban-limit").value),
+        kick_limit: parseInt(document.getElementById("antinuke-kick-limit").value),
+        channel_delete_limit: parseInt(document.getElementById("antinuke-channel-limit").value),
+        role_delete_limit: parseInt(document.getElementById("antinuke-role-limit").value),
+        punishment: document.getElementById("antinuke-punishment").value,
+        beast_mode: {
+            enabled: document.getElementById("beast-enabled").checked,
+            score_limit: parseInt(document.getElementById("beast-score-limit").value),
+            ban_score: 10,
+            kick_score: 5,
+            channel_delete_score: 8,
+            role_delete_score: 8,
+            punishment: document.getElementById("beast-punishment").value,
+            duration_minutes: parseInt(document.getElementById("beast-duration").value),
+        },
+    };
+    const result = await adminFetch("/api/antinuke", "POST", antinuke);
+    if (result && result.success) showToast("Anti-Nuke settings saved!");
 });
 
 // Save features

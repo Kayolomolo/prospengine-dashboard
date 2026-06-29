@@ -190,6 +190,92 @@
                 </div>
 
                 <div class="card">
+                    <h2>🔒 Verification</h2>
+                    <div class="admin-form">
+                        <label>Verification Method</label>
+                        <select id="verify-method" class="admin-input">
+                            <option value="captcha">Captcha</option>
+                            <option value="button">Button Click</option>
+                        </select>
+                        <div class="admin-row">
+                            <div>
+                                <label>Captcha Length</label>
+                                <input type="number" id="verify-length" class="admin-input" min="4" max="8" value="6">
+                            </div>
+                            <div>
+                                <label>Difficulty</label>
+                                <select id="verify-difficulty" class="admin-input">
+                                    <option value="easy">Easy (numbers only)</option>
+                                    <option value="medium">Medium (letters & numbers)</option>
+                                    <option value="hard">Hard (mixed case)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Max Attempts</label>
+                                <input type="number" id="verify-attempts" class="admin-input" min="1" max="10" value="3">
+                            </div>
+                            <div>
+                                <label>Timeout (seconds)</label>
+                                <input type="number" id="verify-timeout" class="admin-input" min="60" max="600" value="300">
+                            </div>
+                        </div>
+                        <button id="save-verify-btn" class="admin-btn" style="margin-top: 1rem;">Save Verification Settings</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🛡️ Anti-Nuke</h2>
+                    <div class="admin-form">
+                        <label><input type="checkbox" id="antinuke-enabled"> Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Ban Limit</label>
+                                <input type="number" id="antinuke-ban-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Kick Limit</label>
+                                <input type="number" id="antinuke-kick-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Channel Delete Limit</label>
+                                <input type="number" id="antinuke-channel-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Role Delete Limit</label>
+                                <input type="number" id="antinuke-role-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                        </div>
+                        <label>Punishment</label>
+                        <select id="antinuke-punishment" class="admin-input">
+                            <option value="ban">Ban</option>
+                            <option value="kick">Kick</option>
+                            <option value="clear_roles">Remove All Roles</option>
+                        </select>
+                        <h3 style="margin-top: 1rem;">🐉 Beast Mode</h3>
+                        <label><input type="checkbox" id="beast-enabled"> Beast Mode Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Score Limit</label>
+                                <input type="number" id="beast-score-limit" class="admin-input" min="10" max="100" value="25">
+                            </div>
+                            <div>
+                                <label>Duration (minutes)</label>
+                                <input type="number" id="beast-duration" class="admin-input" min="10" max="1440" value="60">
+                            </div>
+                            <div>
+                                <label>Beast Punishment</label>
+                                <select id="beast-punishment" class="admin-input">
+                                    <option value="ban">Ban</option>
+                                    <option value="kick">Kick</option>
+                                    <option value="clear_roles">Remove All Roles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="save-antinuke-btn" class="admin-btn" style="margin-top: 1rem;">Save Anti-Nuke Settings</button>
+                    </div>
+                </div>
+
+                <div class="card">
                     <h2>🔄 Season</h2>
                     <div class="admin-row" style="margin-bottom: 1rem;">
                         <div>
