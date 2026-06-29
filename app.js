@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8080/api/data";
+const GITHUB_DATA_URL = "https://raw.githubusercontent.com/Kayolomolo/prospengine-dashboard/main/data.json";
+const LOCAL_API_URL = "http://localhost:8080/api/data";
 
 let data = null;
 
@@ -42,16 +43,22 @@ function getMedal(index) {
 
 async function fetchData() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(LOCAL_API_URL);
+        data = await response.json();
+        renderAll();
+        return;
+    } catch (e) {}
+
+    try {
+        const response = await fetch(GITHUB_DATA_URL + "?t=" + Date.now());
         data = await response.json();
         renderAll();
     } catch (e) {
         document.querySelector("main").innerHTML = `
             <div class="empty-state" style="margin-top: 4rem;">
                 <div class="empty-icon">🔌</div>
-                <h2>Can't connect to ProspEngine</h2>
-                <p style="margin-top: 0.5rem;">Make sure the bot is running on your machine.</p>
-                <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">API: ${API_URL}</p>
+                <h2>Can't load data</h2>
+                <p style="margin-top: 0.5rem;">Data is not available right now. Try again later.</p>
             </div>
         `;
     }
