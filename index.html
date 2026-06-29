@@ -20,6 +20,7 @@
             <a href="#players" class="nav-link" data-section="players">Players</a>
             <a href="#training" class="nav-link" data-section="training">Training</a>
             <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
+            <a href="#admin" class="nav-link" data-section="admin">⚙️ Admin</a>
         </div>
     </nav>
 
@@ -127,10 +128,88 @@
         </section>
     </main>
 
+        <!-- Admin Section -->
+        <section id="admin" class="section">
+            <div id="admin-login" class="card" style="max-width: 400px; margin: 3rem auto;">
+                <h2>🔐 Admin Login</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Enter your admin password to access settings.</p>
+                <input type="password" id="admin-password" placeholder="Password" class="admin-input">
+                <button id="admin-login-btn" class="admin-btn">Login</button>
+                <p id="login-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+            </div>
+
+            <div id="admin-panel" style="display: none;">
+                <h1>⚙️ Admin Panel</h1>
+
+                <div class="card">
+                    <h2>🔧 Features</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Toggle bot features on or off.</p>
+                    <div id="features-grid" class="features-grid"></div>
+                    <button id="save-features-btn" class="admin-btn" style="margin-top: 1rem;">Save Features</button>
+                </div>
+
+                <div class="card">
+                    <h2>📅 Weekly Tournament</h2>
+                    <div class="admin-form">
+                        <label>
+                            <input type="checkbox" id="weekly-enabled"> Enabled
+                        </label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Day</label>
+                                <select id="weekly-day" class="admin-input">
+                                    <option value="0">Monday</option>
+                                    <option value="1">Tuesday</option>
+                                    <option value="2">Wednesday</option>
+                                    <option value="3">Thursday</option>
+                                    <option value="4">Friday</option>
+                                    <option value="5">Saturday</option>
+                                    <option value="6">Sunday</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Hour (UTC)</label>
+                                <input type="number" id="weekly-hour" class="admin-input" min="0" max="23" value="20">
+                            </div>
+                            <div>
+                                <label>Gamemode</label>
+                                <select id="weekly-gamemode" class="admin-input">
+                                    <option value="1">1v1</option>
+                                    <option value="2">2v2</option>
+                                    <option value="3">3v3</option>
+                                    <option value="4">4v4</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Max Players</label>
+                                <input type="number" id="weekly-maxplayers" class="admin-input" min="2" max="64" value="12">
+                            </div>
+                        </div>
+                        <button id="save-weekly-btn" class="admin-btn" style="margin-top: 1rem;">Save Weekly Settings</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🔄 Season</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Current season: <strong id="admin-season">—</strong></p>
+                    <button id="reset-season-btn" class="admin-btn admin-btn-danger">Reset Season & ELO</button>
+                </div>
+
+                <div class="card">
+                    <h2>⚠️ Warnings</h2>
+                    <div id="warnings-list"></div>
+                </div>
+
+                <button id="admin-logout-btn" class="admin-btn" style="margin-top: 1rem; background: var(--text-secondary);">Logout</button>
+            </div>
+        </section>
+    </main>
+
     <footer>
         <p>Powered by <strong>ProspEngine</strong> — Team Prosperity 🚀</p>
     </footer>
 
     <script src="app.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
