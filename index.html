@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProspEngine Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span class="logo">🚀</span>
+            <span class="brand-name">ProspEngine</span>
+        </div>
+        <div class="nav-links">
+            <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
+            <a href="#leaderboard" class="nav-link" data-section="leaderboard">Leaderboard</a>
+            <a href="#players" class="nav-link" data-section="players">Players</a>
+            <a href="#training" class="nav-link" data-section="training">Training</a>
+            <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Overview Section -->
+        <section id="overview" class="section active">
+            <div class="server-header">
+                <img id="server-icon" src="" alt="Server Icon" class="server-icon">
+                <div>
+                    <h1 id="server-name">Loading...</h1>
+                    <p id="server-members" class="subtitle">— members</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="stat-season">—</div>
+                    <div class="stat-label">Current Season</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="stat-members">—</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-value" id="stat-matches">—</div>
+                    <div class="stat-label">Matches Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="stat-avg-elo">—</div>
+                    <div class="stat-label">Avg ELO</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🏅 Top 5 Players</h2>
+                <div id="top5-list" class="top-list"></div>
+            </div>
+
+            <div class="card">
+                <h2>💬 Latest Quote</h2>
+                <div id="latest-quote" class="quote-display"></div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="section">
+            <h1>🏆 ELO Leaderboard — Season <span id="lb-season">—</span></h1>
+            <div class="card">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>ELO</th>
+                            <th>Rank</th>
+                            <th>W/L</th>
+                            <th>Winrate</th>
+                            <th>Tournaments Won</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+
+            <h2 class="mt">📈 Level Leaderboard</h2>
+            <div class="card">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Level</th>
+                            <th>XP</th>
+                            <th>Level Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="level-leaderboard-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Players Section -->
+        <section id="players" class="section">
+            <h1>👥 Players</h1>
+            <div class="search-bar">
+                <input type="text" id="player-search" placeholder="Search players...">
+            </div>
+            <div id="players-grid" class="players-grid"></div>
+        </section>
+
+        <!-- Training Section -->
+        <section id="training" class="section">
+            <h1>🏋️ Training Packs</h1>
+            <div id="training-list" class="training-grid"></div>
+        </section>
+
+        <!-- Quotes Section -->
+        <section id="quotes" class="section">
+            <h1>💬 Quotes Wall</h1>
+            <div id="quotes-list" class="quotes-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by <strong>ProspEngine</strong> — Team Prosperity 🚀</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
