@@ -547,6 +547,15 @@ footer {
     }
 }
 
+.tournament-player {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: rgba(108, 92, 231, 0.15);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
 /* Admin Panel */
 .admin-input {
     width: 100%;

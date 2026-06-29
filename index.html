@@ -20,7 +20,14 @@
             <a href="#players" class="nav-link" data-section="players">Players</a>
             <a href="#training" class="nav-link" data-section="training">Training</a>
             <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
+            <a href="#tournaments" class="nav-link" data-section="tournaments">Tournaments</a>
             <a href="#admin" class="nav-link" data-section="admin">⚙️ Admin</a>
+            <div id="nav-user" style="display:none; margin-left: 0.5rem;">
+                <img id="nav-avatar" src="" style="width:28px;height:28px;border-radius:50%;vertical-align:middle;">
+                <span id="nav-username" style="font-size:0.85rem;margin-left:0.3rem;"></span>
+            </div>
+            <a href="#" id="login-btn" class="nav-link" style="background:var(--accent);">Login with Discord</a>
+            <a href="#" id="logout-btn" class="nav-link" style="display:none;">Logout</a>
         </div>
     </nav>
 
@@ -127,6 +134,13 @@
             <div id="quotes-list" class="quotes-grid"></div>
         </section>
     </main>
+
+        <!-- Tournaments Section -->
+        <section id="tournaments" class="section">
+            <h1>🏆 Tournaments</h1>
+            <p class="subtitle" style="margin-bottom: 1.5rem;" id="tournament-login-msg">Login with Discord to join tournaments!</p>
+            <div id="tournaments-list"></div>
+        </section>
 
         <!-- Admin Section -->
         <section id="admin" class="section">
@@ -359,6 +373,7 @@
     </footer>
 
     <script src="app.js"></script>
+    <script src="discord-auth.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

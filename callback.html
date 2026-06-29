@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Logging in...</title></head>
+<body>
+<script>
+const fragment = new URLSearchParams(window.location.hash.slice(1));
+const token = fragment.get("access_token");
+if (token) {
+    localStorage.setItem("discord_token", token);
+    window.location.href = "./";
+} else {
+    document.body.textContent = "Login failed. Close this window and try again.";
+}
+</script>
+</body>
+</html>
