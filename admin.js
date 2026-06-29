@@ -100,6 +100,20 @@ async function loadSettings() {
     document.getElementById("beast-duration").value = beast.duration_minutes ?? 60;
     document.getElementById("beast-punishment").value = beast.punishment || "clear_roles";
 
+    // Anti-Raid
+    const antiraid = settings.antiraid || {};
+    document.getElementById("antiraid-enabled").checked = antiraid.enabled !== false;
+    document.getElementById("antiraid-score-limit").value = antiraid.score_limit ?? 50;
+    document.getElementById("antiraid-avatar-score").value = antiraid.no_avatar_score ?? 5;
+    document.getElementById("antiraid-age-score").value = antiraid.account_age_score ?? 5;
+    document.getElementById("antiraid-joinrow-score").value = antiraid.join_row_score ?? 10;
+    document.getElementById("antiraid-age-bypass").value = antiraid.age_bypass_days ?? 180;
+    document.getElementById("antiraid-joinrow-threshold").value = antiraid.join_row_threshold_seconds ?? 5;
+    document.getElementById("antiraid-punishment").value = antiraid.punishment || "ban";
+    document.getElementById("antiraid-ban-days").value = antiraid.punishment_days ?? 2;
+    document.getElementById("antiraid-lock-hours").value = antiraid.lock_duration_hours ?? 2;
+    document.getElementById("antiraid-reset-mins").value = antiraid.score_reset_minutes ?? 10;
+
     // Weekly tournament
     const weekly = settings.weekly_tournament || {};
     document.getElementById("weekly-enabled").checked = weekly.enabled || false;
@@ -217,6 +231,25 @@ document.getElementById("save-antinuke-btn").addEventListener("click", async () 
     };
     const result = await adminFetch("/api/antinuke", "POST", antinuke);
     if (result && result.success) showToast("Anti-Nuke settings saved!");
+});
+
+// Save anti-raid
+document.getElementById("save-antiraid-btn").addEventListener("click", async () => {
+    const antiraid = {
+        enabled: document.getElementById("antiraid-enabled").checked,
+        score_limit: parseInt(document.getElementById("antiraid-score-limit").value),
+        no_avatar_score: parseInt(document.getElementById("antiraid-avatar-score").value),
+        account_age_score: parseInt(document.getElementById("antiraid-age-score").value),
+        join_row_score: parseInt(document.getElementById("antiraid-joinrow-score").value),
+        age_bypass_days: parseInt(document.getElementById("antiraid-age-bypass").value),
+        join_row_threshold_seconds: parseInt(document.getElementById("antiraid-joinrow-threshold").value),
+        punishment: document.getElementById("antiraid-punishment").value,
+        punishment_days: parseInt(document.getElementById("antiraid-ban-days").value),
+        lock_duration_hours: parseInt(document.getElementById("antiraid-lock-hours").value),
+        score_reset_minutes: parseInt(document.getElementById("antiraid-reset-mins").value),
+    };
+    const result = await adminFetch("/api/antiraid", "POST", antiraid);
+    if (result && result.success) showToast("Anti-Raid settings saved!");
 });
 
 // Save features

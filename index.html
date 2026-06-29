@@ -276,6 +276,63 @@
                 </div>
 
                 <div class="card">
+                    <h2>🛡️ Anti-Raid</h2>
+                    <div class="admin-form">
+                        <label><input type="checkbox" id="antiraid-enabled"> Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Score Limit</label>
+                                <input type="number" id="antiraid-score-limit" class="admin-input" min="10" max="200" value="50">
+                            </div>
+                            <div>
+                                <label>No Avatar Score</label>
+                                <input type="number" id="antiraid-avatar-score" class="admin-input" min="0" max="50" value="5">
+                            </div>
+                            <div>
+                                <label>Account Age Score</label>
+                                <input type="number" id="antiraid-age-score" class="admin-input" min="0" max="50" value="5">
+                            </div>
+                            <div>
+                                <label>Join Row Score</label>
+                                <input type="number" id="antiraid-joinrow-score" class="admin-input" min="0" max="50" value="10">
+                            </div>
+                        </div>
+                        <div class="admin-row">
+                            <div>
+                                <label>Age Bypass (days)</label>
+                                <input type="number" id="antiraid-age-bypass" class="admin-input" min="1" max="365" value="180">
+                            </div>
+                            <div>
+                                <label>Join Row Threshold (sec)</label>
+                                <input type="number" id="antiraid-joinrow-threshold" class="admin-input" min="1" max="30" value="5">
+                            </div>
+                            <div>
+                                <label>Punishment</label>
+                                <select id="antiraid-punishment" class="admin-input">
+                                    <option value="ban">Ban</option>
+                                    <option value="kick">Kick</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Ban Duration (days)</label>
+                                <input type="number" id="antiraid-ban-days" class="admin-input" min="1" max="30" value="2">
+                            </div>
+                        </div>
+                        <div class="admin-row">
+                            <div>
+                                <label>Lock Duration (hours)</label>
+                                <input type="number" id="antiraid-lock-hours" class="admin-input" min="1" max="24" value="2">
+                            </div>
+                            <div>
+                                <label>Score Reset (minutes)</label>
+                                <input type="number" id="antiraid-reset-mins" class="admin-input" min="1" max="60" value="10">
+                            </div>
+                        </div>
+                        <button id="save-antiraid-btn" class="admin-btn" style="margin-top: 1rem;">Save Anti-Raid Settings</button>
+                    </div>
+                </div>
+
+                <div class="card">
                     <h2>🔄 Season</h2>
                     <div class="admin-row" style="margin-bottom: 1rem;">
                         <div>
