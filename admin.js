@@ -87,7 +87,7 @@ async function loadSettings() {
     document.getElementById("weekly-maxplayers").value = weekly.max_players ?? 12;
 
     // Season
-    document.getElementById("admin-season").textContent = `Season ${settings.season.number}`;
+    document.getElementById("admin-season-number").value = settings.season.number;
 
     // Warnings
     loadWarnings();
@@ -183,6 +183,18 @@ document.getElementById("save-weekly-btn").addEventListener("click", async () =>
     };
     const result = await adminFetch("/api/weekly", "POST", weekly);
     if (result && result.success) showToast("Weekly tournament settings saved!");
+});
+
+// Set season number
+document.getElementById("save-season-btn").addEventListener("click", async () => {
+    const number = parseInt(document.getElementById("admin-season-number").value);
+    if (!number || number < 1) {
+        showToast("Enter a valid season number!", true);
+        return;
+    }
+    if (!confirm(`Set season to ${number}?`)) return;
+    const result = await adminFetch("/api/season-set", "POST", { number });
+    if (result && result.success) showToast(`Season set to ${result.season}!`);
 });
 
 // Reset season

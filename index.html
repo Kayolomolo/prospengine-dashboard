@@ -191,8 +191,14 @@
 
                 <div class="card">
                     <h2>🔄 Season</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Current season: <strong id="admin-season">—</strong></p>
-                    <button id="reset-season-btn" class="admin-btn admin-btn-danger">Reset Season & ELO</button>
+                    <div class="admin-row" style="margin-bottom: 1rem;">
+                        <div>
+                            <label>Season Number</label>
+                            <input type="number" id="admin-season-number" class="admin-input" min="1" value="1">
+                        </div>
+                    </div>
+                    <button id="save-season-btn" class="admin-btn" style="margin-bottom: 0.5rem;">Set Season Number</button>
+                    <button id="reset-season-btn" class="admin-btn admin-btn-danger">Reset ELO & Start New Season</button>
                 </div>
 
                 <div class="card">
