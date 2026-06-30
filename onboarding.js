@@ -244,6 +244,18 @@ async function loadOptionalRolesForm() {
                 </label>
             `;
         }
+
+        const platformContainer = document.getElementById("gs-platform-checkboxes");
+        platformContainer.innerHTML = "";
+        for (const [code, label] of Object.entries(data.available_platforms || {})) {
+            const checked = (data.platforms || []).includes(code);
+            platformContainer.innerHTML += `
+                <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.9rem;">
+                    <input type="checkbox" class="gs-platform-cb" value="${code}" ${checked ? "checked" : ""} style="width:16px;height:16px;">
+                    ${label}
+                </label>
+            `;
+        }
     } catch (e) {}
 }
 
@@ -251,12 +263,14 @@ async function saveOptionalRoles() {
     const wantsAnnounce = document.getElementById("gs-announce-checkbox").checked;
     const langCheckboxes = document.querySelectorAll(".gs-lang-cb:checked");
     const languages = Array.from(langCheckboxes).map(cb => cb.value);
+    const platformCheckboxes = document.querySelectorAll(".gs-platform-cb:checked");
+    const platforms = Array.from(platformCheckboxes).map(cb => cb.value);
 
     try {
         const res = await fetch(API + "/api/onboarding/optional-roles", {
             method: "POST",
             headers: { ...gsAuthHeaders(), "Content-Type": "application/json" },
-            body: JSON.stringify({ tournament_announcements: wantsAnnounce, languages }),
+            body: JSON.stringify({ tournament_announcements: wantsAnnounce, languages, platforms }),
         });
         const data = await res.json();
         if (data.success) {
