@@ -133,12 +133,46 @@
             <h1>💬 Quotes Wall</h1>
             <div id="quotes-list" class="quotes-grid"></div>
         </section>
-    </main>
-
         <!-- Tournaments Section -->
         <section id="tournaments" class="section">
             <h1>🏆 Tournaments</h1>
             <p class="subtitle" style="margin-bottom: 1.5rem;" id="tournament-login-msg">Login with Discord to join tournaments!</p>
+
+            <div id="create-tournament-card" class="card" style="display: none; margin-bottom: 1.5rem;">
+                <h2>➕ Create New Tournament</h2>
+                <div class="admin-form">
+                    <label>Tournament Name</label>
+                    <input type="text" id="new-tournament-name" class="admin-input" placeholder="e.g. Friday Night Cup">
+                    <div class="admin-row">
+                        <div>
+                            <label>Gamemode</label>
+                            <select id="new-tournament-gamemode" class="admin-input">
+                                <option value="1">1v1</option>
+                                <option value="2" selected>2v2</option>
+                                <option value="3">3v3</option>
+                                <option value="4">4v4</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Max Players</label>
+                            <input type="number" id="new-tournament-maxplayers" class="admin-input" min="2" max="64" value="8">
+                        </div>
+                        <div>
+                            <label>Start Time</label>
+                            <input type="text" id="new-tournament-time" class="admin-input" placeholder="e.g. 20:00">
+                        </div>
+                        <div>
+                            <label>Teams</label>
+                            <select id="new-tournament-autoteams" class="admin-input">
+                                <option value="true">Bot creates balanced teams</option>
+                                <option value="false">Teams already assigned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="create-tournament-btn" class="admin-btn" style="margin-top: 1rem;">🏆 Create Tournament</button>
+                </div>
+            </div>
+
             <div id="tournaments-list"></div>
         </section>
 

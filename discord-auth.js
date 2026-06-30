@@ -61,7 +61,61 @@ function updateLoginUI() {
     }
 }
 
+function updateCreateTournamentVisibility() {
+    const card = document.getElementById("create-tournament-card");
+    const token = localStorage.getItem("prospengine_token");
+    if (card) card.style.display = token ? "block" : "none";
+}
+
+async function createTournamentFromWebsite() {
+    const token = localStorage.getItem("prospengine_token");
+    if (!token) {
+        showToast("Login to admin panel first!", true);
+        return;
+    }
+
+    const name = document.getElementById("new-tournament-name").value.trim();
+    const gamemode = parseInt(document.getElementById("new-tournament-gamemode").value);
+    const maxPlayers = parseInt(document.getElementById("new-tournament-maxplayers").value);
+    const starttijd = document.getElementById("new-tournament-time").value.trim();
+    const autoTeams = document.getElementById("new-tournament-autoteams").value === "true";
+
+    if (!name) {
+        showToast("Enter a tournament name!", true);
+        return;
+    }
+
+    try {
+        const res = await fetch(API + "/api/tournaments/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+                "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify({
+                name, gamemode, max_players: maxPlayers, starttijd, auto_teams: autoTeams,
+            }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast("Tournament created and posted to Discord! 🏆");
+            document.getElementById("new-tournament-name").value = "";
+            document.getElementById("new-tournament-time").value = "";
+            loadTournaments();
+        } else {
+            showToast(data.error || "Failed to create tournament", true);
+        }
+    } catch (e) {
+        showToast("Can't connect to bot", true);
+    }
+}
+
+document.getElementById("create-tournament-btn")?.addEventListener("click", createTournamentFromWebsite);
+
 async function loadTournaments() {
+    updateCreateTournamentVisibility();
     const list = document.getElementById("tournaments-list");
 
     try {
