@@ -210,6 +210,9 @@ document.getElementById("gs-submit-captcha").addEventListener("click", async () 
             showGsStep("optional");
             showToast("Verified! 🎉");
             await loadOptionalRolesForm();
+            if (typeof enforceVerificationGate === "function") {
+                await enforceVerificationGate();
+            }
         } else {
             errorEl.textContent = data.error || "Wrong code";
             errorEl.style.display = "block";

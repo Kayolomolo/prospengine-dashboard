@@ -326,6 +326,80 @@ document.getElementById("logout-btn").addEventListener("click", (e) => {
 });
 
 // Init
+let isVerifiedOnDiscord = null;
+
+async function enforceVerificationGate() {
+    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+
+    if (!discordUser || !discordToken) {
+        isVerifiedOnDiscord = null;
+        setNavLocked(false);
+        return;
+    }
+
+    try {
+        const res = await fetch(API + "/api/onboarding/status", {
+            headers: {
+                "Authorization": `Bearer ${discordToken}`,
+                "ngrok-skip-browser-warning": "true",
+            },
+        });
+        if (res.status !== 200) {
+            isVerifiedOnDiscord = null;
+            setNavLocked(false);
+            return;
+        }
+        const data = await res.json();
+        isVerifiedOnDiscord = data.is_verified;
+        setNavLocked(!isVerifiedOnDiscord);
+
+        if (!isVerifiedOnDiscord) {
+            document.querySelectorAll(".nav-link").forEach(link => {
+                if (restrictedSections.includes(link.dataset.section)) {
+                    link.classList.remove("active");
+                }
+            });
+            document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+            document.getElementById("get-started").classList.add("active");
+            const gsLink = document.querySelector('[data-section="get-started"]');
+            if (gsLink) gsLink.classList.add("active");
+        }
+    } catch (e) {
+        isVerifiedOnDiscord = null;
+        setNavLocked(false);
+    }
+}
+
+function setNavLocked(locked) {
+    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+    document.querySelectorAll(".nav-link").forEach(link => {
+        if (restrictedSections.includes(link.dataset.section)) {
+            if (locked) {
+                link.classList.add("nav-locked");
+                link.title = "Complete verification first!";
+            } else {
+                link.classList.remove("nav-locked");
+                link.title = "";
+            }
+        }
+    });
+}
+
+document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", (e) => {
+        const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+        if (isVerifiedOnDiscord === false && restrictedSections.includes(link.dataset.section)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+            document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+            document.getElementById("get-started").classList.add("active");
+            document.querySelector('[data-section="get-started"]').classList.add("active");
+            showToast("Please complete verification first!", true);
+        }
+    }, true);
+});
+
 async function initAuth() {
     if (discordToken) {
         await fetchDiscordUser();
@@ -336,6 +410,7 @@ async function initAuth() {
         loadRules();
         loadOnboarding();
     }
+    await enforceVerificationGate();
 }
 
 // Refresh tournaments when switching to that tab
@@ -350,3 +425,4 @@ origNavHandler.forEach(link => {
 
 initAuth();
 setInterval(loadTournaments, 15000);
+setInterval(enforceVerificationGate, 20000);
