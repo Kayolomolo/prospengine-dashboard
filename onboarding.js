@@ -53,9 +53,10 @@ function showGsStep(step) {
     document.getElementById("gs-step-rules").style.display = step === "rules" ? "block" : "none";
     document.getElementById("gs-step-profile").style.display = step === "profile" ? "block" : "none";
     document.getElementById("gs-step-verify").style.display = step === "verify" ? "block" : "none";
+    document.getElementById("gs-step-optional").style.display = step === "optional" ? "block" : "none";
     document.getElementById("gs-step-done").style.display = step === "done" ? "block" : "none";
 
-    const progress = { rules: 1, profile: 2, verify: 3, done: 3 };
+    const progress = { rules: 1, profile: 2, verify: 3, optional: 3, done: 3 };
     const current = progress[step] || 1;
     for (let i = 1; i <= 3; i++) {
         const el = document.getElementById(`gs-progress-${i}`);
@@ -206,8 +207,9 @@ document.getElementById("gs-submit-captcha").addEventListener("click", async () 
         const data = await res.json();
 
         if (data.success) {
-            showGsStep("done");
-            showToast("Verified! Welcome! 🎉");
+            showGsStep("optional");
+            showToast("Verified! 🎉");
+            await loadOptionalRolesForm();
         } else {
             errorEl.textContent = data.error || "Wrong code";
             errorEl.style.display = "block";
@@ -216,6 +218,59 @@ document.getElementById("gs-submit-captcha").addEventListener("click", async () 
         errorEl.textContent = "Can't connect to bot";
         errorEl.style.display = "block";
     }
+});
+
+async function loadOptionalRolesForm() {
+    try {
+        const res = await fetch(API + "/api/onboarding/optional-roles", {
+            headers: gsAuthHeaders(),
+        });
+        const data = await res.json();
+        if (data.error) return;
+
+        document.getElementById("gs-announce-checkbox").checked = data.tournament_announcements;
+
+        const container = document.getElementById("gs-language-checkboxes");
+        container.innerHTML = "";
+        for (const [code, label] of Object.entries(data.available_languages)) {
+            const checked = data.languages.includes(code);
+            container.innerHTML += `
+                <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.9rem;">
+                    <input type="checkbox" class="gs-lang-cb" value="${code}" ${checked ? "checked" : ""} style="width:16px;height:16px;">
+                    ${label}
+                </label>
+            `;
+        }
+    } catch (e) {}
+}
+
+async function saveOptionalRoles() {
+    const wantsAnnounce = document.getElementById("gs-announce-checkbox").checked;
+    const langCheckboxes = document.querySelectorAll(".gs-lang-cb:checked");
+    const languages = Array.from(langCheckboxes).map(cb => cb.value);
+
+    try {
+        const res = await fetch(API + "/api/onboarding/optional-roles", {
+            method: "POST",
+            headers: { ...gsAuthHeaders(), "Content-Type": "application/json" },
+            body: JSON.stringify({ tournament_announcements: wantsAnnounce, languages }),
+        });
+        const data = await res.json();
+        if (data.success) {
+            showGsStep("done");
+            showToast("Welcome to the server! 🎉");
+        } else {
+            showToast(data.error || "Failed to save", true);
+        }
+    } catch (e) {
+        showToast("Can't connect to bot", true);
+    }
+}
+
+document.getElementById("gs-save-optional").addEventListener("click", saveOptionalRoles);
+document.getElementById("gs-skip-optional").addEventListener("click", () => {
+    showGsStep("done");
+    showToast("Welcome to the server! 🎉");
 });
 
 document.querySelectorAll(".nav-link").forEach(link => {

@@ -133,6 +133,29 @@
                     <p id="gs-captcha-error" style="color: var(--red); margin-top:0.5rem; display:none;"></p>
                 </div>
 
+                <!-- Step 4: Optional roles -->
+                <div id="gs-step-optional" class="card gs-card" style="display:none;">
+                    <h2>✨ Optional Roles</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Completely optional — you can always change these later in #optional-roles or with /optional-roles.</p>
+
+                    <div class="gs-substep">
+                        <h3>🔔 Tournament Announcements</h3>
+                        <label style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="checkbox" id="gs-announce-checkbox" style="width:18px;height:18px;">
+                            Ping me when a new tournament is posted
+                        </label>
+                    </div>
+
+                    <div class="gs-substep" style="margin-top:1rem;">
+                        <h3>🌍 Languages</h3>
+                        <p style="color: var(--text-secondary); font-size:0.85rem; margin-bottom:0.5rem;">Select all languages you speak</p>
+                        <div id="gs-language-checkboxes" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.5rem;"></div>
+                    </div>
+
+                    <button id="gs-save-optional" class="admin-btn" style="margin-top:1.5rem;">Save & Continue →</button>
+                    <button id="gs-skip-optional" class="admin-btn" style="margin-top:0.5rem; background:var(--text-secondary);">Skip for now</button>
+                </div>
+
                 <!-- Done -->
                 <div id="gs-step-done" class="card gs-card" style="display:none; text-align:center;">
                     <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
