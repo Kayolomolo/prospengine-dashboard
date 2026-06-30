@@ -192,7 +192,7 @@ async function loadTournaments() {
 
         list.innerHTML = tournaments.map(t => {
             const modeNames = { 1: "1v1", 2: "2v2", 3: "3v3", 4: "4v4" };
-            const playerList = t.players.map(p => `<span class="tournament-player">• ${p.name}</span>`).join("");
+            const playerList = t.players.map(p => `<span class="tournament-player">• ${escapeHtml(p.name)}</span>`).join("");
             const isJoined = discordUser && t.players.some(p => p.id === discordUser.id);
             const isFull = t.player_count >= t.max_players;
 
@@ -217,7 +217,7 @@ async function loadTournaments() {
             return `
                 <div class="card" style="margin-bottom: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h2 style="margin: 0;">🏆 ${t.name}</h2>
+                        <h2 style="margin: 0;">🏆 ${escapeHtml(t.name)}</h2>
                         <div style="display:flex; align-items:center; gap:0.5rem;">
                             <span class="rank-badge rank-bg-${t.started ? 'gc' : 'gold'}">${t.started ? "In Progress" : "Open"}</span>
                             ${deleteBtn}

@@ -4,6 +4,16 @@ const LOCAL_API_URL = "http://localhost:8080/api/data";
 
 let data = null;
 
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function getRankClass(rank) {
     if (rank.includes("Supersonic")) return "ssl";
     if (rank.includes("Grand Champion")) return "gc";
@@ -128,7 +138,7 @@ function renderOverview() {
                     <div class="top-position">${getMedal(i)}</div>
                     <img class="top-avatar" src="${member.avatar}" alt="">
                     <div class="top-info">
-                        <div class="top-name">${member.name}</div>
+                        <div class="top-name">${escapeHtml(member.name)}</div>
                         <div class="top-rank rank-${getRankClass(member.rank)}">${member.rank}</div>
                     </div>
                     <div class="top-elo">${elo} ELO</div>
@@ -141,8 +151,8 @@ function renderOverview() {
     if (data.quotes.length > 0) {
         const q = data.quotes[data.quotes.length - 1];
         quoteEl.innerHTML = `
-            <div class="quote-text">"${q.quote}"</div>
-            <div class="quote-author">— ${q.member_name}</div>
+            <div class="quote-text">"${escapeHtml(q.quote)}"</div>
+            <div class="quote-author">— ${escapeHtml(q.member_name)}</div>
         `;
     } else {
         quoteEl.innerHTML = '<p style="color: var(--text-secondary)">No quotes yet</p>';
@@ -172,7 +182,7 @@ function renderLeaderboard() {
                     <td>
                         <div class="player-cell">
                             <img class="player-avatar" src="${member.avatar}" alt="">
-                            ${member.name}
+                            ${escapeHtml(member.name)}
                         </div>
                     </td>
                     <td><strong>${elo}</strong></td>
@@ -205,7 +215,7 @@ function renderLeaderboard() {
                     <td>
                         <div class="player-cell">
                             <img class="player-avatar" src="${member.avatar}" alt="">
-                            ${member.name}
+                            ${escapeHtml(member.name)}
                         </div>
                     </td>
                     <td><strong>${level}</strong></td>
@@ -242,7 +252,7 @@ function renderPlayers() {
             return `
                 <div class="player-card">
                     <img class="avatar" src="${m.avatar}" alt="">
-                    <div class="name">${m.name}</div>
+                    <div class="name">${escapeHtml(m.name)}</div>
                     <span class="rank-badge rank-bg-${rankClass}">${m.rank}</span>
                     <div class="player-stats">
                         <div>
@@ -290,10 +300,10 @@ function renderTraining() {
         const addedBy = data.members[pack.added_by] || { name: pack.added_by_name || "Unknown" };
         return `
             <div class="training-card">
-                <div class="training-name">${pack.name}</div>
-                <div class="training-code">${pack.code}</div>
+                <div class="training-name">${escapeHtml(pack.name)}</div>
+                <div class="training-code">${escapeHtml(pack.code)}</div>
                 <span class="difficulty-badge difficulty-${pack.difficulty}">${pack.difficulty}</span>
-                <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">Added by ${addedBy.name}</p>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">Added by ${escapeHtml(addedBy.name)}</p>
             </div>
         `;
     }).join("");
@@ -310,8 +320,8 @@ function renderQuotes() {
 
     list.innerHTML = [...quotes].reverse().map(q => `
         <div class="quote-card">
-            <div class="quote-text">"${q.quote}"</div>
-            <div class="quote-author">— ${q.member_name} • ${new Date(q.date).toLocaleDateString()}</div>
+            <div class="quote-text">"${escapeHtml(q.quote)}"</div>
+            <div class="quote-author">— ${escapeHtml(q.member_name)} • ${new Date(q.date).toLocaleDateString()}</div>
         </div>
     `).join("");
 }
