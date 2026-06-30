@@ -1,6 +1,29 @@
 const API_BASE = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://clarify-retrace-abrasion.ngrok-free.dev";
 
-let adminToken = localStorage.getItem("prospengine_token") || null;
+const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function getStoredAdminToken() {
+    const token = localStorage.getItem("prospengine_token");
+    const expiresAt = parseInt(localStorage.getItem("prospengine_token_expires") || "0");
+    if (!token || !expiresAt || Date.now() > expiresAt) {
+        localStorage.removeItem("prospengine_token");
+        localStorage.removeItem("prospengine_token_expires");
+        return null;
+    }
+    return token;
+}
+
+function storeAdminToken(token) {
+    localStorage.setItem("prospengine_token", token);
+    localStorage.setItem("prospengine_token_expires", String(Date.now() + TOKEN_EXPIRY_MS));
+}
+
+function clearAdminToken() {
+    localStorage.removeItem("prospengine_token");
+    localStorage.removeItem("prospengine_token_expires");
+}
+
+let adminToken = getStoredAdminToken();
 
 const FEATURE_LABELS = {
     "verificatie": "🔒 Verification",
@@ -41,7 +64,7 @@ async function adminFetch(endpoint, method = "GET", body = null) {
     const res = await fetch(API_BASE + endpoint, opts);
     if (res.status === 401) {
         adminToken = null;
-        localStorage.removeItem("prospengine_token");
+        clearAdminToken();
         showAdminLogin();
         showToast("Session expired. Please login again.", true);
         return null;
@@ -146,7 +169,7 @@ function loadWarnings() {
         list.innerHTML += `
             <div class="warning-item">
                 <div class="warning-info">
-                    <strong>${member.name}</strong>
+                    <strong>${escapeHtml(member.name)}</strong>
                     <span style="color: var(--text-secondary)"> — ${warns.length} warning(s)</span>
                 </div>
                 <button class="warning-clear-btn" onclick="clearWarnings('${uid}')">Clear</button>
@@ -178,7 +201,7 @@ document.getElementById("admin-login-btn").addEventListener("click", async () =>
 
         if (data.success) {
             adminToken = data.token;
-            localStorage.setItem("prospengine_token", adminToken);
+            storeAdminToken(adminToken);
             document.getElementById("login-error").style.display = "none";
             showAdminPanel();
             showToast("Logged in!");
@@ -302,7 +325,7 @@ document.getElementById("reset-season-btn").addEventListener("click", async () =
 // Logout
 document.getElementById("admin-logout-btn").addEventListener("click", () => {
     adminToken = null;
-    localStorage.removeItem("prospengine_token");
+    clearAdminToken();
     document.getElementById("admin-password").value = "";
     showAdminLogin();
     showToast("Logged out");

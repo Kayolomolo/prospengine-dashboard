@@ -63,12 +63,12 @@ function updateLoginUI() {
 
 function updateCreateTournamentVisibility() {
     const card = document.getElementById("create-tournament-card");
-    const token = localStorage.getItem("prospengine_token");
+    const token = getStoredAdminToken();
     if (card) card.style.display = token ? "block" : "none";
 }
 
 async function createTournamentFromWebsite() {
-    const token = localStorage.getItem("prospengine_token");
+    const token = getStoredAdminToken();
     if (!token) {
         showToast("Login to admin panel first!", true);
         return;
@@ -127,7 +127,7 @@ async function createTournamentFromWebsite() {
 document.getElementById("create-tournament-btn")?.addEventListener("click", createTournamentFromWebsite);
 
 async function deleteTournament(tid) {
-    const token = localStorage.getItem("prospengine_token");
+    const token = getStoredAdminToken();
     if (!token) {
         showToast("Login to admin panel first!", true);
         return;
@@ -209,7 +209,7 @@ async function loadTournaments() {
                 actionBtn = `<button class="admin-btn" onclick="joinTournament(${t.id})">🎮 Join Tournament</button>`;
             }
 
-            const isAdmin = !!localStorage.getItem("prospengine_token");
+            const isAdmin = !!getStoredAdminToken();
             const deleteBtn = isAdmin
                 ? `<button class="admin-btn admin-btn-danger" style="width:auto;padding:0.4rem 0.8rem;" onclick="deleteTournament(${t.id})">🗑️ Delete</button>`
                 : "";
