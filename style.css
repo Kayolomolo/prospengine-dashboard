@@ -547,6 +547,56 @@ footer {
     }
 }
 
+.gs-progress {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.gs-step {
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.gs-step.active {
+    background: var(--accent);
+    color: white;
+}
+
+.gs-step.done {
+    background: var(--green);
+    color: white;
+}
+
+.gs-card h2 {
+    margin-bottom: 1rem;
+}
+
+.gs-rules-text {
+    white-space: pre-line;
+    line-height: 1.8;
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.03);
+    padding: 1.25rem;
+    border-radius: 12px;
+}
+
+.gs-substep {
+    padding: 1rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+}
+
+.gs-substep h3 {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
 .tournament-player {
     display: inline-block;
     padding: 0.2rem 0.6rem;

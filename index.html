@@ -15,6 +15,7 @@
             <span class="brand-name">ProspEngine</span>
         </div>
         <div class="nav-links">
+            <a href="#get-started" class="nav-link" data-section="get-started" style="background: var(--accent);">🚀 Get Started</a>
             <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
             <a href="#leaderboard" class="nav-link" data-section="leaderboard">Leaderboard</a>
             <a href="#players" class="nav-link" data-section="players">Players</a>
@@ -32,6 +33,115 @@
     </nav>
 
     <main>
+        <!-- Get Started / Onboarding Section -->
+        <section id="get-started" class="section">
+            <h1>🚀 Get Started</h1>
+
+            <div id="gs-login-required" class="card" style="max-width: 500px; margin: 2rem auto; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">👋</div>
+                <h2>Welcome! Let's get you set up.</h2>
+                <p style="color: var(--text-secondary); margin: 1rem 0;">Login with Discord to start your onboarding.</p>
+                <button class="admin-btn" onclick="window.location.href=getLoginUrl()">Login with Discord</button>
+            </div>
+
+            <div id="gs-flow" style="display:none; max-width: 700px; margin: 0 auto;">
+                <div class="gs-progress">
+                    <div class="gs-step" id="gs-progress-1">1. Rules</div>
+                    <div class="gs-step" id="gs-progress-2">2. Profile</div>
+                    <div class="gs-step" id="gs-progress-3">3. Verify</div>
+                </div>
+
+                <!-- Step 1: Rules -->
+                <div id="gs-step-rules" class="card gs-card">
+                    <h2 id="gs-rules-title">📋 Server Rules</h2>
+                    <div id="gs-rules-text" class="gs-rules-text"></div>
+                    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1.5rem;">
+                        <input type="checkbox" id="gs-rules-checkbox" style="width:18px;height:18px;">
+                        I have read and agree to the server rules
+                    </label>
+                    <button id="gs-rules-next" class="admin-btn" style="margin-top:1rem;" disabled>Continue →</button>
+                </div>
+
+                <!-- Step 2: Profile setup -->
+                <div id="gs-step-profile" class="card gs-card" style="display:none;">
+                    <h2>⚙️ Set Up Your Profile</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Both steps are required to continue.</p>
+
+                    <div class="gs-substep">
+                        <h3>🕐 Timezone <span id="gs-tz-check"></span></h3>
+                        <select id="gs-timezone-select" class="admin-input">
+                            <option value="">Choose your timezone...</option>
+                            <option value="CEST">🇳🇱 Netherlands / Belgium (CEST)</option>
+                            <option value="Europe/London">🇬🇧 United Kingdom (BST)</option>
+                            <option value="Europe/Berlin">🇩🇪 Germany (CEST)</option>
+                            <option value="EDT">🇺🇸 US Eastern (EDT)</option>
+                            <option value="CDT">🇺🇸 US Central (CDT)</option>
+                            <option value="MDT">🇺🇸 US Mountain (MDT)</option>
+                            <option value="PDT">🇺🇸 US Pacific (PDT)</option>
+                            <option value="JST">🇯🇵 Japan (JST)</option>
+                            <option value="AEST">🇦🇺 Australia (AEST)</option>
+                            <option value="UTC">🌍 UTC</option>
+                        </select>
+                        <button id="gs-save-timezone" class="admin-btn" style="margin-top:0.75rem;">Save Timezone</button>
+                    </div>
+
+                    <div class="gs-substep" style="margin-top:1.5rem;">
+                        <h3>🏅 Rocket League Rank <span id="gs-rank-check"></span></h3>
+                        <select id="gs-rank-select" class="admin-input">
+                            <option value="">Choose your rank...</option>
+                            <option value="Supersonic Legend">Supersonic Legend</option>
+                            <option value="Grand Champion III">Grand Champion III</option>
+                            <option value="Grand Champion II">Grand Champion II</option>
+                            <option value="Grand Champion I">Grand Champion I</option>
+                            <option value="Champion III">Champion III</option>
+                            <option value="Champion II">Champion II</option>
+                            <option value="Champion I">Champion I</option>
+                            <option value="Diamond III">Diamond III</option>
+                            <option value="Diamond II">Diamond II</option>
+                            <option value="Diamond I">Diamond I</option>
+                            <option value="Platinum III">Platinum III</option>
+                            <option value="Platinum II">Platinum II</option>
+                            <option value="Platinum I">Platinum I</option>
+                            <option value="Gold III">Gold III</option>
+                            <option value="Gold II">Gold II</option>
+                            <option value="Gold I">Gold I</option>
+                            <option value="Silver III">Silver III</option>
+                            <option value="Silver II">Silver II</option>
+                            <option value="Silver I">Silver I</option>
+                            <option value="Bronze III">Bronze III</option>
+                            <option value="Bronze II">Bronze II</option>
+                            <option value="Bronze I">Bronze I</option>
+                            <option value="Unranked">Unranked</option>
+                        </select>
+                        <input type="text" id="gs-epic-name" class="admin-input" placeholder="Your Epic Games username" style="margin-top:0.5rem;">
+                        <button id="gs-save-rank" class="admin-btn" style="margin-top:0.75rem;">Submit Rank Request</button>
+                        <p style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">An admin will verify your rank.</p>
+                    </div>
+
+                    <button id="gs-profile-next" class="admin-btn" style="margin-top:1.5rem;" disabled>Continue →</button>
+                </div>
+
+                <!-- Step 3: Captcha verification -->
+                <div id="gs-step-verify" class="card gs-card" style="display:none;">
+                    <h2>🔒 Final Step — Verify Yourself</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Solve the captcha below to complete verification.</p>
+                    <img id="gs-captcha-img" src="" style="border-radius:8px; margin-bottom:1rem; max-width:100%;">
+                    <br>
+                    <button id="gs-new-captcha" class="admin-btn" style="width:auto; padding:0.5rem 1rem; margin-bottom:1rem;">🔄 New Captcha</button>
+                    <input type="text" id="gs-captcha-answer" class="admin-input" placeholder="Enter the code">
+                    <button id="gs-submit-captcha" class="admin-btn" style="margin-top:0.75rem;">Verify</button>
+                    <p id="gs-captcha-error" style="color: var(--red); margin-top:0.5rem; display:none;"></p>
+                </div>
+
+                <!-- Done -->
+                <div id="gs-step-done" class="card gs-card" style="display:none; text-align:center;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+                    <h2>You're verified!</h2>
+                    <p style="color: var(--text-secondary); margin-top:0.5rem;">Welcome to the server! You now have full access on Discord.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Overview Section -->
         <section id="overview" class="section active">
             <div class="server-header">
@@ -416,6 +526,7 @@
 
     <script src="app.js"></script>
     <script src="discord-auth.js"></script>
+    <script src="onboarding.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

@@ -332,6 +332,10 @@ async function initAuth() {
     }
     updateLoginUI();
     loadTournaments();
+    if (typeof loadOnboarding === "function") {
+        loadRules();
+        loadOnboarding();
+    }
 }
 
 // Refresh tournaments when switching to that tab
