@@ -80,6 +80,7 @@ async function createTournamentFromWebsite() {
     const dateVal = document.getElementById("new-tournament-date").value;
     const timeVal = document.getElementById("new-tournament-time").value;
     const autoTeams = document.getElementById("new-tournament-autoteams").value === "true";
+    const isWeekly = document.getElementById("new-tournament-weekly").checked;
 
     if (!name) {
         showToast("Enter a tournament name!", true);
@@ -103,6 +104,7 @@ async function createTournamentFromWebsite() {
             },
             body: JSON.stringify({
                 name, gamemode, max_players: maxPlayers, starttijd, auto_teams: autoTeams,
+                weekly: isWeekly, tz_offset_minutes: new Date().getTimezoneOffset(),
             }),
         });
         const data = await res.json();
@@ -112,6 +114,7 @@ async function createTournamentFromWebsite() {
             document.getElementById("new-tournament-name").value = "";
             document.getElementById("new-tournament-date").value = "";
             document.getElementById("new-tournament-time").value = "";
+            document.getElementById("new-tournament-weekly").checked = false;
             loadTournaments();
         } else {
             showToast(data.error || "Failed to create tournament", true);
