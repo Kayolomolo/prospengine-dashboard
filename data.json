@@ -2,7 +2,7 @@
   "server": {
     "name": "ProspEngine",
     "icon": "https://cdn.discordapp.com/icons/1519266568847233075/f1acadad7c30e7cdd49efc9c2f3900f0.png?size=1024",
-    "member_count": 3
+    "member_count": 4
   },
   "season": {
     "number": 1,
@@ -82,7 +82,16 @@
       "level": 0,
       "xp": 0,
       "joined": "2026-06-24T10:47:49.199000+00:00"
+    },
+    "1410619933850599586": {
+      "name": "test",
+      "avatar": "https://cdn.discordapp.com/avatars/1410619933850599586/8d5251e6af735a24ee99600282bea284.png?size=1024",
+      "rank": "Unranked",
+      "elo": 1000,
+      "level": 0,
+      "xp": 13,
+      "joined": "2026-06-30T16:13:12.668473+00:00"
     }
   },
-  "last_updated": "2026-06-30T16:10:14.074485+00:00"
+  "last_updated": "2026-06-30T16:15:07.688682+00:00"
 }
