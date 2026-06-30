@@ -332,8 +332,13 @@ async function enforceVerificationGate() {
     const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
 
     if (!discordUser || !discordToken) {
-        isVerifiedOnDiscord = null;
-        setNavLocked(false);
+        isVerifiedOnDiscord = false;
+        setNavLocked(true);
+        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+        document.getElementById("get-started").classList.add("active");
+        const gsLink = document.querySelector('[data-section="get-started"]');
+        if (gsLink) gsLink.classList.add("active");
         return;
     }
 
