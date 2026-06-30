@@ -77,12 +77,20 @@ async function createTournamentFromWebsite() {
     const name = document.getElementById("new-tournament-name").value.trim();
     const gamemode = parseInt(document.getElementById("new-tournament-gamemode").value);
     const maxPlayers = parseInt(document.getElementById("new-tournament-maxplayers").value);
-    const starttijd = document.getElementById("new-tournament-time").value.trim();
+    const dateVal = document.getElementById("new-tournament-date").value;
+    const timeVal = document.getElementById("new-tournament-time").value;
     const autoTeams = document.getElementById("new-tournament-autoteams").value === "true";
 
     if (!name) {
         showToast("Enter a tournament name!", true);
         return;
+    }
+
+    let starttijd = "";
+    if (dateVal && timeVal) {
+        starttijd = `${dateVal}T${timeVal}`;
+    } else if (timeVal) {
+        starttijd = timeVal;
     }
 
     try {
@@ -102,6 +110,7 @@ async function createTournamentFromWebsite() {
         if (data.success) {
             showToast("Tournament created and posted to Discord! 🏆");
             document.getElementById("new-tournament-name").value = "";
+            document.getElementById("new-tournament-date").value = "";
             document.getElementById("new-tournament-time").value = "";
             loadTournaments();
         } else {
@@ -113,6 +122,48 @@ async function createTournamentFromWebsite() {
 }
 
 document.getElementById("create-tournament-btn")?.addEventListener("click", createTournamentFromWebsite);
+
+async function deleteTournament(tid) {
+    const token = localStorage.getItem("prospengine_token");
+    if (!token) {
+        showToast("Login to admin panel first!", true);
+        return;
+    }
+    if (!confirm("Delete this tournament? This can't be undone.")) return;
+
+    try {
+        const res = await fetch(API + "/api/tournaments/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+                "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify({ tournament_id: tid }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast("Tournament deleted");
+            loadTournaments();
+        } else {
+            showToast(data.error || "Failed to delete", true);
+        }
+    } catch (e) {
+        showToast("Can't connect to bot", true);
+    }
+}
+
+function formatStartTime(starttijd) {
+    if (!starttijd) return "TBD";
+    if (starttijd.includes("T")) {
+        const d = new Date(starttijd);
+        if (!isNaN(d)) {
+            return d.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        }
+    }
+    return starttijd;
+}
 
 async function loadTournaments() {
     updateCreateTournamentVisibility();
@@ -155,11 +206,19 @@ async function loadTournaments() {
                 actionBtn = `<button class="admin-btn" onclick="joinTournament(${t.id})">🎮 Join Tournament</button>`;
             }
 
+            const isAdmin = !!localStorage.getItem("prospengine_token");
+            const deleteBtn = isAdmin
+                ? `<button class="admin-btn admin-btn-danger" style="width:auto;padding:0.4rem 0.8rem;" onclick="deleteTournament(${t.id})">🗑️ Delete</button>`
+                : "";
+
             return `
                 <div class="card" style="margin-bottom: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <h2 style="margin: 0;">🏆 ${t.name}</h2>
-                        <span class="rank-badge rank-bg-${t.started ? 'gc' : 'gold'}">${t.started ? "In Progress" : "Open"}</span>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <span class="rank-badge rank-bg-${t.started ? 'gc' : 'gold'}">${t.started ? "In Progress" : "Open"}</span>
+                            ${deleteBtn}
+                        </div>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
                         <div>
@@ -172,7 +231,7 @@ async function loadTournaments() {
                         </div>
                         <div>
                             <div class="player-stat-label">Start Time</div>
-                            <div class="player-stat-value">${t.starttijd || "TBD"}</div>
+                            <div class="player-stat-value">${formatStartTime(t.starttijd)}</div>
                         </div>
                     </div>
                     <div style="margin-bottom: 1rem;">
