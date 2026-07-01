@@ -83,6 +83,15 @@
       "xp": 0,
       "joined": "2026-06-24T10:47:49.199000+00:00"
     },
+    "1204469386300096536": {
+      "name": "PSP Guerro",
+      "avatar": "https://cdn.discordapp.com/avatars/1204469386300096536/e330f235c762ca429d25d6a91b460c29.png?size=1024",
+      "rank": "Unranked",
+      "elo": 1000,
+      "level": 0,
+      "xp": 0,
+      "joined": "2026-07-01T12:03:02.578000+00:00"
+    },
     "1410619933850599586": {
       "name": "test",
       "avatar": "https://cdn.discordapp.com/avatars/1410619933850599586/8d5251e6af735a24ee99600282bea284.png?size=1024",
@@ -91,16 +100,7 @@
       "level": 0,
       "xp": 26,
       "joined": "2026-06-30T17:33:12.951000+00:00"
-    },
-    "1204469386300096536": {
-      "name": "PSP Guerro",
-      "avatar": "https://cdn.discordapp.com/avatars/1204469386300096536/e330f235c762ca429d25d6a91b460c29.png?size=1024",
-      "rank": "Unranked",
-      "elo": 1000,
-      "level": 0,
-      "xp": 0,
-      "joined": "2026-07-01T12:03:02.578569+00:00"
     }
   },
-  "last_updated": "2026-07-01T12:40:37.523245+00:00"
+  "last_updated": "2026-07-01T12:45:06.510612+00:00"
 }
