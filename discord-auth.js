@@ -1,10 +1,10 @@
 const DISCORD_CLIENT_ID = "1519267915449503774";
 const REDIRECT_URI = window.location.hostname === "localhost"
-    ? "http://localhost:3459/callback.html"
+    ? `http://localhost:${PROSPENGINE_CONFIG.LOCAL_DASHBOARD_PORT}/callback.html`
     : "https://kayolomolo.github.io/prospengine-dashboard/callback.html";
 const API = window.location.hostname === "localhost"
-    ? "http://localhost:8080"
-    : "https://clarify-retrace-abrasion.ngrok-free.dev";
+    ? PROSPENGINE_CONFIG.LOCAL_BASE
+    : PROSPENGINE_CONFIG.NGROK_BASE;
 
 let discordUser = null;
 let discordToken = localStorage.getItem("discord_token") || null;

@@ -1,6 +1,6 @@
 const GITHUB_DATA_URL = "https://raw.githubusercontent.com/Kayolomolo/prospengine-dashboard/main/data.json";
-const NGROK_API_URL = "https://clarify-retrace-abrasion.ngrok-free.dev/api/data";
-const LOCAL_API_URL = "http://localhost:8080/api/data";
+const NGROK_API_URL = PROSPENGINE_CONFIG.NGROK_BASE + "/api/data";
+const LOCAL_API_URL = PROSPENGINE_CONFIG.LOCAL_BASE + "/api/data";
 
 let data = null;
 
@@ -52,11 +52,36 @@ function getMedal(index) {
     return `${index + 1}.`;
 }
 
+// Fills in safe defaults for any field the API response might be missing,
+// so a backend change or partial response can't crash the whole dashboard.
+function normalizeData(raw) {
+    if (!raw || typeof raw !== "object") raw = {};
+    return {
+        server: {
+            name: raw.server?.name ?? "Unknown Server",
+            icon: raw.server?.icon ?? null,
+            member_count: Number.isFinite(raw.server?.member_count) ? raw.server.member_count : 0,
+        },
+        season: {
+            number: raw.season?.number ?? 1,
+            start: raw.season?.start ?? new Date().toISOString(),
+        },
+        elo: (raw.elo && typeof raw.elo === "object") ? raw.elo : {},
+        season_stats: (raw.season_stats && typeof raw.season_stats === "object") ? raw.season_stats : {},
+        levels: (raw.levels && typeof raw.levels === "object") ? raw.levels : {},
+        training_packs: Array.isArray(raw.training_packs) ? raw.training_packs : [],
+        quotes: Array.isArray(raw.quotes) ? raw.quotes : [],
+        birthdays: (raw.birthdays && typeof raw.birthdays === "object") ? raw.birthdays : {},
+        members: (raw.members && typeof raw.members === "object") ? raw.members : {},
+        warnings: (raw.warnings && typeof raw.warnings === "object") ? raw.warnings : {},
+    };
+}
+
 async function fetchData() {
     // Try local API first (fastest when on same machine)
     try {
         const response = await fetch(LOCAL_API_URL);
-        data = await response.json();
+        data = normalizeData(await response.json());
         renderAll();
         return;
     } catch (e) {}
@@ -64,7 +89,7 @@ async function fetchData() {
     // Try ngrok API
     try {
         const response = await fetch(NGROK_API_URL, { headers: { "ngrok-skip-browser-warning": "true" } });
-        data = await response.json();
+        data = normalizeData(await response.json());
         renderAll();
         return;
     } catch (e) {}
@@ -72,7 +97,7 @@ async function fetchData() {
     // Fallback to GitHub data
     try {
         const response = await fetch(GITHUB_DATA_URL + "?t=" + Date.now());
-        data = await response.json();
+        data = normalizeData(await response.json());
         renderAll();
     } catch (e) {
         document.querySelector("main").innerHTML = `
@@ -85,12 +110,23 @@ async function fetchData() {
     }
 }
 
+// Each section renders independently — if one throws (e.g. unexpected data shape),
+// the others still render instead of the whole dashboard going blank.
 function renderAll() {
-    renderOverview();
-    renderLeaderboard();
-    renderPlayers();
-    renderTraining();
-    renderQuotes();
+    const sections = [
+        ["overview", renderOverview],
+        ["leaderboard", renderLeaderboard],
+        ["players", renderPlayers],
+        ["training", renderTraining],
+        ["quotes", renderQuotes],
+    ];
+    for (const [name, fn] of sections) {
+        try {
+            fn();
+        } catch (e) {
+            console.error(`Failed to render section "${name}":`, e);
+        }
+    }
 }
 
 function renderOverview() {

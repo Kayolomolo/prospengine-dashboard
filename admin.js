@@ -1,4 +1,4 @@
-const API_BASE = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://clarify-retrace-abrasion.ngrok-free.dev";
+const API_BASE = window.location.hostname === "localhost" ? PROSPENGINE_CONFIG.LOCAL_BASE : PROSPENGINE_CONFIG.NGROK_BASE;
 
 const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
