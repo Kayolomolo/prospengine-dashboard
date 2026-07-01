@@ -921,6 +921,24 @@ footer {
     box-shadow: 0 8px 30px var(--rl-blue-glow);
 }
 
+.rl-link-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.rl-link-btn:hover {
+    color: var(--rl-orange);
+}
+
 .rl-admin-header {
     display: flex;
     align-items: center;

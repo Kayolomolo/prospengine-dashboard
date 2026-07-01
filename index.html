@@ -347,7 +347,7 @@
         <!-- Admin Section -->
         <!-- Admin Login Section -->
         <section id="admin-login" class="section rl-admin-zone">
-            <div class="rl-login-card">
+            <div class="rl-login-card" id="admin-login-step">
                 <div class="rl-login-badge">RESTRICTED ACCESS</div>
                 <h2>🔐 Admin Login</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Sign in with your ProspEngine staff account.</p>
@@ -355,6 +355,29 @@
                 <input type="password" id="admin-password" placeholder="Password" class="admin-input" autocomplete="current-password">
                 <button id="admin-login-btn" class="admin-btn rl-boost-btn">Login</button>
                 <p id="login-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="show-forgot-password-btn" class="rl-link-btn">Forgot password?</button>
+            </div>
+
+            <div class="rl-login-card" id="admin-forgot-step1" style="display:none;">
+                <div class="rl-login-badge">PASSWORD RESET</div>
+                <h2>🔑 Forgot Password</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your username — if your account has a Discord account linked, you'll get a reset code by DM.</p>
+                <input type="text" id="forgot-username" placeholder="Username" class="admin-input" autocomplete="username">
+                <button type="button" id="send-reset-code-btn" class="admin-btn rl-boost-btn">Send Reset Code</button>
+                <p id="forgot-step1-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <p id="forgot-step1-success" style="color: var(--green); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="back-to-login-btn-1" class="rl-link-btn">Back to login</button>
+            </div>
+
+            <div class="rl-login-card" id="admin-forgot-step2" style="display:none;">
+                <div class="rl-login-badge">PASSWORD RESET</div>
+                <h2>📨 Enter Reset Code</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Check your Discord DMs for the 6-digit code we just sent.</p>
+                <input type="text" id="reset-code" placeholder="6-digit code" class="admin-input" maxlength="6">
+                <input type="password" id="reset-new-password" placeholder="New password (min. 8 characters)" class="admin-input" autocomplete="new-password">
+                <button type="button" id="submit-reset-code-btn" class="admin-btn rl-boost-btn">Reset Password</button>
+                <p id="forgot-step2-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="back-to-login-btn-2" class="rl-link-btn">Back to login</button>
             </div>
         </section>
 
@@ -594,6 +617,10 @@
                                 <option value="moderator">Moderator</option>
                                 <option value="admin">Admin</option>
                             </select>
+                        </div>
+                        <div>
+                            <label>Discord User ID (optional)</label>
+                            <input type="text" id="new-admin-discord-id" class="admin-input" placeholder="for password reset via DM">
                         </div>
                     </div>
                     <button id="create-admin-btn" class="admin-btn" style="margin-top: 1rem;">Create Account</button>

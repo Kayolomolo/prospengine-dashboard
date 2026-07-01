@@ -100,6 +100,7 @@ async function adminFetch(endpoint, method = "GET", body = null) {
 function showAdminLogin() {
     const passField = document.getElementById("admin-password");
     if (passField) passField.value = "";
+    if (typeof showForgotStep === "function") showForgotStep("login");
     showSection("admin-login");
 }
 
@@ -232,11 +233,14 @@ async function clearWarnings(uid) {
     }
 }
 
+let _adminUsersCache = [];
+
 async function loadAdminUsers() {
     if (adminRole !== "admin") return;
     const result = await adminFetch("/api/admin/users");
     if (!result) return;
 
+    _adminUsersCache = result.users;
     const list = document.getElementById("admin-users-list");
     const myUsername = getStoredAdminUsername();
     list.innerHTML = result.users.map(u => `
@@ -244,9 +248,15 @@ async function loadAdminUsers() {
             <div>
                 <strong>${escapeHtml(u.username)}</strong>
                 <span class="rl-role-pill rl-role-pill-${escapeHtml(u.role)}">${escapeHtml(u.role)}</span>
-                <div style="color:var(--text-secondary); font-size:0.8rem;">Last login: ${u.last_login ? new Date(u.last_login).toLocaleString() : "never"}</div>
+                <div style="color:var(--text-secondary); font-size:0.8rem;">
+                    ${u.discord_id ? `Discord: ${escapeHtml(u.discord_id)}` : "No Discord linked"} · Last login: ${u.last_login ? new Date(u.last_login).toLocaleString() : "never"}
+                </div>
             </div>
-            <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.3rem 0.7rem;" data-action="delete-admin-user" data-username="${escapeHtml(u.username)}" ${u.username === myUsername ? "disabled" : ""}>Delete</button>
+            <div style="display:flex; gap:0.4rem;">
+                <button class="admin-btn" style="width:auto; padding:0.3rem 0.7rem;" data-action="edit-admin-user" data-username="${escapeHtml(u.username)}">Edit</button>
+                <button class="admin-btn" style="width:auto; padding:0.3rem 0.7rem; background:var(--text-secondary);" data-action="reset-admin-user-password" data-username="${escapeHtml(u.username)}">Reset Password</button>
+                <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.3rem 0.7rem;" data-action="delete-admin-user" data-username="${escapeHtml(u.username)}" ${u.username === myUsername ? "disabled" : ""}>Delete</button>
+            </div>
         </div>
     `).join("");
 }
@@ -262,19 +272,60 @@ async function deleteAdminUser(username) {
     }
 }
 
+async function editAdminUser(username) {
+    const current = _adminUsersCache.find(u => u.username === username);
+
+    const newUsername = prompt("Username:", username);
+    if (newUsername === null) return;
+
+    const newDiscordId = prompt("Discord User ID (leave empty to unlink):", (current && current.discord_id) || "");
+    if (newDiscordId === null) return;
+
+    const body = { username, discord_id: newDiscordId.trim() };
+    if (newUsername.trim() && newUsername.trim().toLowerCase() !== username) {
+        body.new_username = newUsername.trim();
+    }
+
+    const result = await adminFetch("/api/admin/users/update", "POST", body);
+    if (result && result.success) {
+        showToast("Account updated!");
+        loadAdminUsers();
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+}
+
+async function resetAdminUserPassword(username) {
+    const newPassword = prompt(`New password for "${username}" (min. 8 characters):`);
+    if (newPassword === null) return;
+    if (newPassword.length < 8) {
+        showToast("Password must be at least 8 characters", true);
+        return;
+    }
+
+    const result = await adminFetch("/api/admin/users/reset-password", "POST", { username, new_password: newPassword });
+    if (result && result.success) {
+        showToast("Password reset!");
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+}
+
 document.getElementById("create-admin-btn")?.addEventListener("click", async () => {
     const username = document.getElementById("new-admin-username").value.trim();
     const password = document.getElementById("new-admin-password").value;
     const role = document.getElementById("new-admin-role").value;
+    const discordId = document.getElementById("new-admin-discord-id").value.trim();
     if (!username || !password) {
         showToast("Enter a username and password!", true);
         return;
     }
-    const result = await adminFetch("/api/admin/users/create", "POST", { username, password, role });
+    const result = await adminFetch("/api/admin/users/create", "POST", { username, password, role, discord_id: discordId });
     if (result && result.success) {
         showToast("Account created!");
         document.getElementById("new-admin-username").value = "";
         document.getElementById("new-admin-password").value = "";
+        document.getElementById("new-admin-discord-id").value = "";
         loadAdminUsers();
     } else if (result && result.error) {
         showToast(result.error, true);
@@ -317,6 +368,87 @@ document.getElementById("admin-username").addEventListener("keydown", (e) => {
 });
 document.getElementById("admin-password").addEventListener("keydown", (e) => {
     if (e.key === "Enter") document.getElementById("admin-login-btn").click();
+});
+
+// Forgot password flow
+let _forgotPasswordUsername = "";
+
+function showForgotStep(step) {
+    document.getElementById("admin-login-step").style.display = step === "login" ? "block" : "none";
+    document.getElementById("admin-forgot-step1").style.display = step === "step1" ? "block" : "none";
+    document.getElementById("admin-forgot-step2").style.display = step === "step2" ? "block" : "none";
+}
+
+document.getElementById("show-forgot-password-btn").addEventListener("click", () => {
+    document.getElementById("forgot-username").value = document.getElementById("admin-username").value;
+    document.getElementById("forgot-step1-error").style.display = "none";
+    document.getElementById("forgot-step1-success").style.display = "none";
+    showForgotStep("step1");
+});
+
+document.getElementById("back-to-login-btn-1").addEventListener("click", () => showForgotStep("login"));
+document.getElementById("back-to-login-btn-2").addEventListener("click", () => showForgotStep("login"));
+
+document.getElementById("send-reset-code-btn").addEventListener("click", async () => {
+    const username = document.getElementById("forgot-username").value.trim();
+    const errorEl = document.getElementById("forgot-step1-error");
+    const successEl = document.getElementById("forgot-step1-success");
+    errorEl.style.display = "none";
+    successEl.style.display = "none";
+    if (!username) return;
+
+    try {
+        const res = await fetch(API_BASE + "/api/admin/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            body: JSON.stringify({ username }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            _forgotPasswordUsername = username;
+            document.getElementById("reset-code").value = "";
+            document.getElementById("reset-new-password").value = "";
+            document.getElementById("forgot-step2-error").style.display = "none";
+            showForgotStep("step2");
+        } else {
+            errorEl.textContent = data.error || "Something went wrong";
+            errorEl.style.display = "block";
+        }
+    } catch (e) {
+        errorEl.textContent = "Can't connect to bot. Make sure it's running.";
+        errorEl.style.display = "block";
+    }
+});
+
+document.getElementById("submit-reset-code-btn").addEventListener("click", async () => {
+    const code = document.getElementById("reset-code").value.trim();
+    const newPassword = document.getElementById("reset-new-password").value;
+    const errorEl = document.getElementById("forgot-step2-error");
+    errorEl.style.display = "none";
+    if (!code || !newPassword) return;
+
+    try {
+        const res = await fetch(API_BASE + "/api/admin/reset-password-with-code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+            body: JSON.stringify({ username: _forgotPasswordUsername, code, new_password: newPassword }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast("Password reset! You can log in now.");
+            document.getElementById("admin-username").value = _forgotPasswordUsername;
+            document.getElementById("admin-password").value = "";
+            showForgotStep("login");
+        } else {
+            errorEl.textContent = data.error || "Something went wrong";
+            errorEl.style.display = "block";
+        }
+    } catch (e) {
+        errorEl.textContent = "Can't connect to bot. Make sure it's running.";
+        errorEl.style.display = "block";
+    }
 });
 
 // Save verification

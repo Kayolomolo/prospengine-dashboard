@@ -447,6 +447,10 @@ document.addEventListener("click", (e) => {
         clearWarnings(el.dataset.uid);
     } else if (action === "delete-admin-user") {
         deleteAdminUser(el.dataset.username);
+    } else if (action === "edit-admin-user") {
+        editAdminUser(el.dataset.username);
+    } else if (action === "reset-admin-user-password") {
+        resetAdminUserPassword(el.dataset.username);
     } else if (action === "open-admin-login") {
         if (typeof closeNavDropdown === "function") closeNavDropdown();
         if (getStoredAdminToken()) {
