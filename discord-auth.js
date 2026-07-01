@@ -344,6 +344,7 @@ document.getElementById("logout-btn").addEventListener("click", (e) => {
     discordUser = null;
     updateLoginUI();
     loadTournaments();
+    if (typeof closeMobileNav === "function") closeMobileNav();
 });
 
 // Init

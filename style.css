@@ -48,6 +48,7 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    transition: transform 0.25s ease;
 }
 
 .nav-brand {
@@ -1011,5 +1012,64 @@ footer {
 .rl-role-pill-helper {
     color: var(--silver);
     background: rgba(192, 192, 192, 0.12);
+}
+
+/* Mobile nav: collapse the sidebar into a slide-in drawer instead of
+   permanently reserving 220px on a narrow screen. */
+.mobile-nav-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 150;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+}
+
+.nav-backdrop.visible {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-left: 0;
+    }
+
+    .mobile-nav-toggle {
+        display: flex;
+    }
+
+    nav {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+
+    nav.nav-open {
+        transform: translateX(0);
+    }
+
+    main {
+        padding-top: 4.5rem;
+    }
+
+    .rl-admin-zone::before {
+        left: 0;
+    }
 }
 

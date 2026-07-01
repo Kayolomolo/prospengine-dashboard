@@ -423,8 +423,26 @@ document.querySelectorAll(".nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
         e.preventDefault();
         showSection(link.dataset.section);
+        closeMobileNav();
     });
 });
+
+// Mobile nav: sidebar slides in as a drawer instead of staying permanently visible
+const mobileNavToggle = document.getElementById("mobile-nav-toggle");
+const navBackdrop = document.getElementById("nav-backdrop");
+const navEl = document.querySelector("nav");
+
+function closeMobileNav() {
+    navEl.classList.remove("nav-open");
+    navBackdrop.classList.remove("visible");
+}
+
+mobileNavToggle?.addEventListener("click", () => {
+    navEl.classList.toggle("nav-open");
+    navBackdrop.classList.toggle("visible");
+});
+
+navBackdrop?.addEventListener("click", closeMobileNav);
 
 // Delegated click handler for dynamically-rendered buttons (CSP blocks inline onclick,
 // so anything injected via innerHTML dispatches through data-action instead).
@@ -453,6 +471,7 @@ document.addEventListener("click", (e) => {
         resetAdminUserPassword(el.dataset.username);
     } else if (action === "open-admin-login") {
         if (typeof closeNavDropdown === "function") closeNavDropdown();
+        closeMobileNav();
         if (getStoredAdminToken()) {
             showAdminPanel();
         } else {
