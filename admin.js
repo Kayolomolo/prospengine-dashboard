@@ -115,11 +115,7 @@ function applyRoleGating() {
 
     document.querySelectorAll("[data-min-role]").forEach(card => {
         const required = ROLE_LEVEL[card.dataset.minRole] || 0;
-        const allowed = level >= required;
-        card.querySelectorAll("input, select, button, textarea").forEach(field => {
-            field.disabled = !allowed;
-        });
-        card.classList.toggle("role-locked", !allowed);
+        card.style.display = level >= required ? "" : "none";
     });
 
     const manageAdmins = document.getElementById("manage-admins-card");
