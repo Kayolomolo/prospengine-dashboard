@@ -2,7 +2,7 @@
   "server": {
     "name": "ProspEngine",
     "icon": "https://cdn.discordapp.com/icons/1519266568847233075/f1acadad7c30e7cdd49efc9c2f3900f0.png?size=1024",
-    "member_count": 4
+    "member_count": 5
   },
   "season": {
     "number": 1,
@@ -91,7 +91,16 @@
       "level": 0,
       "xp": 26,
       "joined": "2026-06-30T17:33:12.951000+00:00"
+    },
+    "1204469386300096536": {
+      "name": "PSP Guerro",
+      "avatar": "https://cdn.discordapp.com/avatars/1204469386300096536/e330f235c762ca429d25d6a91b460c29.png?size=1024",
+      "rank": "Unranked",
+      "elo": 1000,
+      "level": 0,
+      "xp": 0,
+      "joined": "2026-07-01T12:03:02.578569+00:00"
     }
   },
-  "last_updated": "2026-07-01T12:00:37.524224+00:00"
+  "last_updated": "2026-07-01T12:05:37.523685+00:00"
 }
