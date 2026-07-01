@@ -13,6 +13,23 @@ function getLoginUrl() {
     return `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
 }
 
+// Dropdown menu behind the nav avatar (only visible once logged in with Discord)
+function closeNavDropdown() {
+    document.getElementById("nav-user")?.classList.remove("dropdown-open");
+}
+
+document.getElementById("nav-user-trigger")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("nav-user")?.classList.toggle("dropdown-open");
+});
+
+document.addEventListener("click", (e) => {
+    const navUser = document.getElementById("nav-user");
+    if (navUser && !navUser.contains(e.target)) {
+        navUser.classList.remove("dropdown-open");
+    }
+});
+
 async function fetchDiscordUser() {
     if (!discordToken) return null;
 
@@ -59,12 +76,14 @@ function updateLoginUI() {
         navUser.style.display = "none";
         if (tournamentMsg) tournamentMsg.textContent = "Login with Discord to join tournaments!";
     }
+
+    if (typeof renderMyTournaments === "function") renderMyTournaments();
 }
 
 function updateCreateTournamentVisibility() {
     const card = document.getElementById("create-tournament-card");
-    const token = getStoredAdminToken();
-    if (card) card.style.display = token ? "block" : "none";
+    const isModOrAbove = adminRole === "admin" || adminRole === "moderator";
+    if (card) card.style.display = (getStoredAdminToken() && isModOrAbove) ? "block" : "none";
 }
 
 async function createTournamentFromWebsite() {
@@ -200,18 +219,18 @@ async function loadTournaments() {
             if (t.started) {
                 actionBtn = `<button class="admin-btn" disabled style="opacity:0.5;">Tournament in progress</button>`;
             } else if (!discordUser) {
-                actionBtn = `<button class="admin-btn" onclick="window.location.href=getLoginUrl()">Login to join</button>`;
+                actionBtn = `<button class="admin-btn" data-action="login-discord">Login to join</button>`;
             } else if (isJoined) {
-                actionBtn = `<button class="admin-btn admin-btn-danger" onclick="leaveTournament(${t.id})">Leave Tournament</button>`;
+                actionBtn = `<button class="admin-btn admin-btn-danger" data-action="leave-tournament" data-tid="${t.id}">Leave Tournament</button>`;
             } else if (isFull) {
                 actionBtn = `<button class="admin-btn" disabled style="opacity:0.5;">Tournament is full</button>`;
             } else {
-                actionBtn = `<button class="admin-btn" onclick="joinTournament(${t.id})">🎮 Join Tournament</button>`;
+                actionBtn = `<button class="admin-btn" data-action="join-tournament" data-tid="${t.id}">🎮 Join Tournament</button>`;
             }
 
-            const isAdmin = !!getStoredAdminToken();
-            const deleteBtn = isAdmin
-                ? `<button class="admin-btn admin-btn-danger" style="width:auto;padding:0.4rem 0.8rem;" onclick="deleteTournament(${t.id})">🗑️ Delete</button>`
+            const isModOrAbove = adminRole === "admin" || adminRole === "moderator";
+            const deleteBtn = (isModOrAbove && getStoredAdminToken())
+                ? `<button class="admin-btn admin-btn-danger" style="width:auto;padding:0.4rem 0.8rem;" data-action="delete-tournament" data-tid="${t.id}">🗑️ Delete</button>`
                 : "";
 
             return `
@@ -330,12 +349,26 @@ document.getElementById("logout-btn").addEventListener("click", (e) => {
 // Init
 let isVerifiedOnDiscord = null;
 
+function updateGetStartedVisibility(isVerified) {
+    const gsLink = document.querySelector('[data-section="get-started"]');
+    if (!gsLink) return;
+    if (isVerified) {
+        gsLink.style.display = "none";
+        if (document.getElementById("get-started").classList.contains("active")) {
+            showSection("overview");
+        }
+    } else {
+        gsLink.style.display = "";
+    }
+}
+
 async function enforceVerificationGate() {
-    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments"];
 
     if (!discordUser || !discordToken) {
         isVerifiedOnDiscord = false;
         setNavLocked(true);
+        updateGetStartedVisibility(false);
         document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
         document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
         document.getElementById("get-started").classList.add("active");
@@ -359,6 +392,7 @@ async function enforceVerificationGate() {
         const data = await res.json();
         isVerifiedOnDiscord = data.is_verified;
         setNavLocked(!isVerifiedOnDiscord);
+        updateGetStartedVisibility(isVerifiedOnDiscord);
 
         if (!isVerifiedOnDiscord) {
             document.querySelectorAll(".nav-link").forEach(link => {
@@ -378,7 +412,7 @@ async function enforceVerificationGate() {
 }
 
 function setNavLocked(locked) {
-    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+    const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments"];
     document.querySelectorAll(".nav-link").forEach(link => {
         if (restrictedSections.includes(link.dataset.section)) {
             if (locked) {
@@ -394,7 +428,7 @@ function setNavLocked(locked) {
 
 document.querySelectorAll(".nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
-        const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments", "admin"];
+        const restrictedSections = ["overview", "leaderboard", "players", "training", "quotes", "tournaments"];
         if (isVerifiedOnDiscord === false && restrictedSections.includes(link.dataset.section)) {
             e.preventDefault();
             e.stopImmediatePropagation();

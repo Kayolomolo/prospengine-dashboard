@@ -193,6 +193,52 @@ function renderOverview() {
     } else {
         quoteEl.innerHTML = '<p style="color: var(--text-secondary)">No quotes yet</p>';
     }
+
+    renderMyTournaments();
+}
+
+async function renderMyTournaments() {
+    const card = document.getElementById("my-tournaments-card");
+    const list = document.getElementById("my-tournaments-list");
+    if (!card || !list) return;
+
+    if (typeof discordUser === "undefined" || !discordUser) {
+        card.style.display = "none";
+        return;
+    }
+
+    try {
+        const API_URL = window.location.hostname === "localhost"
+            ? PROSPENGINE_CONFIG.LOCAL_BASE
+            : PROSPENGINE_CONFIG.NGROK_BASE;
+        const res = await fetch(API_URL + "/api/tournaments", {
+            headers: { "ngrok-skip-browser-warning": "true" },
+        });
+        const resData = await res.json();
+        const tournaments = resData.tournaments || [];
+        const joined = tournaments.filter(t => t.players.some(p => p.id === discordUser.id));
+
+        if (joined.length === 0) {
+            card.style.display = "none";
+            return;
+        }
+
+        card.style.display = "block";
+        list.innerHTML = joined.map(t => {
+            const modeNames = { 1: "1v1", 2: "2v2", 3: "3v3", 4: "4v4" };
+            return `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+                    <div>
+                        <div style="font-weight:600;">🏆 ${escapeHtml(t.name)}</div>
+                        <div style="color:var(--text-secondary); font-size:0.85rem;">${modeNames[t.gamemode] || t.gamemode} • ${t.started ? "In progress" : formatStartTime(t.starttijd)}</div>
+                    </div>
+                    <button class="admin-btn" style="width:auto; padding:0.4rem 0.8rem;" data-action="show-section" data-section="tournaments">View</button>
+                </div>
+            `;
+        }).join("");
+    } catch (e) {
+        card.style.display = "none";
+    }
 }
 
 function renderLeaderboard() {
@@ -363,17 +409,52 @@ function renderQuotes() {
 }
 
 // Navigation
+function showSection(sectionId) {
+    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+    const matchingLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+    if (matchingLink) matchingLink.classList.add("active");
+
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    const section = document.getElementById(sectionId);
+    if (section) section.classList.add("active");
+}
+
 document.querySelectorAll(".nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
         e.preventDefault();
-        const section = link.dataset.section;
-
-        document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-
-        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-        document.getElementById(section).classList.add("active");
+        showSection(link.dataset.section);
     });
+});
+
+// Delegated click handler for dynamically-rendered buttons (CSP blocks inline onclick,
+// so anything injected via innerHTML dispatches through data-action instead).
+document.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-action]");
+    if (!el) return;
+    const action = el.dataset.action;
+
+    if (action === "show-section") {
+        showSection(el.dataset.section);
+    } else if (action === "login-discord") {
+        window.location.href = getLoginUrl();
+    } else if (action === "join-tournament") {
+        joinTournament(parseInt(el.dataset.tid));
+    } else if (action === "leave-tournament") {
+        leaveTournament(parseInt(el.dataset.tid));
+    } else if (action === "delete-tournament") {
+        deleteTournament(parseInt(el.dataset.tid));
+    } else if (action === "clear-warning") {
+        clearWarnings(el.dataset.uid);
+    } else if (action === "delete-admin-user") {
+        deleteAdminUser(el.dataset.username);
+    } else if (action === "open-admin-login") {
+        if (typeof closeNavDropdown === "function") closeNavDropdown();
+        if (getStoredAdminToken()) {
+            showAdminPanel();
+        } else {
+            showAdminLogin();
+        }
+    }
 });
 
 // Load data

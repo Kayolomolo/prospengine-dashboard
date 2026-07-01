@@ -33,10 +33,15 @@
             <a href="#training" class="nav-link" data-section="training">Training</a>
             <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
             <a href="#tournaments" class="nav-link" data-section="tournaments">Tournaments</a>
-            <a href="#admin" class="nav-link" data-section="admin">⚙️ Admin</a>
-            <div id="nav-user" style="display:none; margin-left: 0.5rem;">
-                <img id="nav-avatar" src="" style="width:28px;height:28px;border-radius:50%;vertical-align:middle;">
-                <span id="nav-username" style="font-size:0.85rem;margin-left:0.3rem;"></span>
+            <div id="nav-user" class="nav-dropdown" style="display:none; margin-left: 0.5rem;">
+                <button id="nav-user-trigger" class="nav-dropdown-trigger" type="button">
+                    <img id="nav-avatar" src="" alt="">
+                    <span id="nav-username"></span>
+                    <span class="nav-dropdown-caret">▾</span>
+                </button>
+                <div id="nav-dropdown-menu" class="nav-dropdown-menu">
+                    <button type="button" class="nav-dropdown-item" data-action="open-admin-login">🔐 Admin Login</button>
+                </div>
             </div>
             <a href="#" id="login-btn" class="nav-link" style="background:var(--accent);">Login with Discord</a>
             <a href="#" id="logout-btn" class="nav-link" style="display:none;">Logout</a>
@@ -215,6 +220,11 @@
                 </div>
             </div>
 
+            <div class="card" id="my-tournaments-card" style="display:none;">
+                <h2>🎮 Your Tournaments</h2>
+                <div id="my-tournaments-list"></div>
+            </div>
+
             <div class="card">
                 <h2>🏅 Top 5 Players</h2>
                 <div id="top5-list" class="top-list"></div>
@@ -335,26 +345,35 @@
         </section>
 
         <!-- Admin Section -->
-        <section id="admin" class="section">
-            <div id="admin-login" class="card" style="max-width: 400px; margin: 3rem auto;">
+        <!-- Admin Login Section -->
+        <section id="admin-login" class="section rl-admin-zone">
+            <div class="rl-login-card">
+                <div class="rl-login-badge">RESTRICTED ACCESS</div>
                 <h2>🔐 Admin Login</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Enter your admin password to access settings.</p>
-                <input type="password" id="admin-password" placeholder="Password" class="admin-input">
-                <button id="admin-login-btn" class="admin-btn">Login</button>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Sign in with your ProspEngine staff account.</p>
+                <input type="text" id="admin-username" placeholder="Username" class="admin-input" autocomplete="username">
+                <input type="password" id="admin-password" placeholder="Password" class="admin-input" autocomplete="current-password">
+                <button id="admin-login-btn" class="admin-btn rl-boost-btn">Login</button>
                 <p id="login-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
             </div>
+        </section>
 
-            <div id="admin-panel" style="display: none;">
-                <h1>⚙️ Admin Panel</h1>
+        <!-- Admin Panel Section -->
+        <section id="admin" class="section rl-admin-zone">
+            <div id="admin-panel">
+                <div class="rl-admin-header">
+                    <h1>⚙️ Admin Panel</h1>
+                    <span id="admin-role-label" class="rl-role-badge"></span>
+                </div>
 
-                <div class="card">
+                <div class="card" data-min-role="moderator">
                     <h2>🔧 Features</h2>
                     <p style="color: var(--text-secondary); margin-bottom: 1rem;">Toggle bot features on or off.</p>
                     <div id="features-grid" class="features-grid"></div>
                     <button id="save-features-btn" class="admin-btn" style="margin-top: 1rem;">Save Features</button>
                 </div>
 
-                <div class="card">
+                <div class="card" data-min-role="moderator">
                     <h2>📅 Weekly Tournament</h2>
                     <div class="admin-form">
                         <label>
@@ -395,7 +414,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" data-min-role="moderator">
                     <h2>🔒 Verification</h2>
                     <div class="admin-form">
                         <label>Verification Method</label>
@@ -429,7 +448,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" data-min-role="moderator">
                     <h2>🛡️ Anti-Nuke</h2>
                     <div class="admin-form">
                         <label><input type="checkbox" id="antinuke-enabled"> Enabled</label>
@@ -481,7 +500,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" data-min-role="moderator">
                     <h2>🛡️ Anti-Raid</h2>
                     <div class="admin-form">
                         <label><input type="checkbox" id="antiraid-enabled"> Enabled</label>
@@ -538,7 +557,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" data-min-role="admin">
                     <h2>🔄 Season</h2>
                     <div class="admin-row" style="margin-bottom: 1rem;">
                         <div>
@@ -553,6 +572,31 @@
                 <div class="card">
                     <h2>⚠️ Warnings</h2>
                     <div id="warnings-list"></div>
+                </div>
+
+                <div class="card" id="manage-admins-card" style="display:none;">
+                    <h2>👥 Manage Admins</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Give friends their own login — Admin sees everything, Moderator can manage almost everything, Helper can view but not change settings.</p>
+                    <div id="admin-users-list"></div>
+                    <div class="admin-row" style="margin-top: 1rem;">
+                        <div>
+                            <label>Username</label>
+                            <input type="text" id="new-admin-username" class="admin-input" placeholder="username">
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <input type="password" id="new-admin-password" class="admin-input" placeholder="min. 8 characters">
+                        </div>
+                        <div>
+                            <label>Role</label>
+                            <select id="new-admin-role" class="admin-input">
+                                <option value="helper">Helper</option>
+                                <option value="moderator">Moderator</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="create-admin-btn" class="admin-btn" style="margin-top: 1rem;">Create Account</button>
                 </div>
 
                 <button id="admin-logout-btn" class="admin-btn" style="margin-top: 1rem; background: var(--text-secondary);">Logout</button>

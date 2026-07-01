@@ -1,29 +1,42 @@
 const API_BASE = window.location.hostname === "localhost" ? PROSPENGINE_CONFIG.LOCAL_BASE : PROSPENGINE_CONFIG.NGROK_BASE;
 
 const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+const ROLE_LEVEL = { helper: 1, moderator: 2, admin: 3 };
 
 function getStoredAdminToken() {
     const token = localStorage.getItem("prospengine_token");
     const expiresAt = parseInt(localStorage.getItem("prospengine_token_expires") || "0");
     if (!token || !expiresAt || Date.now() > expiresAt) {
-        localStorage.removeItem("prospengine_token");
-        localStorage.removeItem("prospengine_token_expires");
+        clearAdminToken();
         return null;
     }
     return token;
 }
 
-function storeAdminToken(token) {
+function getStoredAdminRole() {
+    return localStorage.getItem("prospengine_admin_role");
+}
+
+function getStoredAdminUsername() {
+    return localStorage.getItem("prospengine_admin_username");
+}
+
+function storeAdminSession(token, role, username) {
     localStorage.setItem("prospengine_token", token);
     localStorage.setItem("prospengine_token_expires", String(Date.now() + TOKEN_EXPIRY_MS));
+    localStorage.setItem("prospengine_admin_role", role);
+    localStorage.setItem("prospengine_admin_username", username);
 }
 
 function clearAdminToken() {
     localStorage.removeItem("prospengine_token");
     localStorage.removeItem("prospengine_token_expires");
+    localStorage.removeItem("prospengine_admin_role");
+    localStorage.removeItem("prospengine_admin_username");
 }
 
 let adminToken = getStoredAdminToken();
+let adminRole = adminToken ? getStoredAdminRole() : null;
 
 const FEATURE_LABELS = {
     "verificatie": "🔒 Verification",
@@ -71,23 +84,52 @@ async function adminFetch(endpoint, method = "GET", body = null) {
     const res = await fetch(API_BASE + endpoint, opts);
     if (res.status === 401) {
         adminToken = null;
+        adminRole = null;
         clearAdminToken();
         showAdminLogin();
         showToast("Session expired. Please login again.", true);
+        return null;
+    }
+    if (res.status === 403) {
+        showToast("You don't have permission to do that.", true);
         return null;
     }
     return await res.json();
 }
 
 function showAdminLogin() {
-    document.getElementById("admin-login").style.display = "block";
-    document.getElementById("admin-panel").style.display = "none";
+    const passField = document.getElementById("admin-password");
+    if (passField) passField.value = "";
+    showSection("admin-login");
 }
 
 function showAdminPanel() {
-    document.getElementById("admin-login").style.display = "none";
-    document.getElementById("admin-panel").style.display = "block";
+    showSection("admin");
     loadSettings();
+    applyRoleGating();
+    if (adminRole === "admin") loadAdminUsers();
+}
+
+function applyRoleGating() {
+    const level = ROLE_LEVEL[adminRole] || 0;
+
+    document.querySelectorAll("[data-min-role]").forEach(card => {
+        const required = ROLE_LEVEL[card.dataset.minRole] || 0;
+        const allowed = level >= required;
+        card.querySelectorAll("input, select, button, textarea").forEach(field => {
+            field.disabled = !allowed;
+        });
+        card.classList.toggle("role-locked", !allowed);
+    });
+
+    const manageAdmins = document.getElementById("manage-admins-card");
+    if (manageAdmins) manageAdmins.style.display = adminRole === "admin" ? "block" : "none";
+
+    const roleLabel = document.getElementById("admin-role-label");
+    if (roleLabel) {
+        const username = getStoredAdminUsername() || "";
+        roleLabel.textContent = `${username} · ${adminRole || ""}`;
+    }
 }
 
 async function loadSettings() {
@@ -164,6 +206,7 @@ function loadWarnings() {
     const list = document.getElementById("warnings-list");
     const warnings = data.warnings || {};
     const members = data.members || {};
+    const canClear = ROLE_LEVEL[adminRole] >= ROLE_LEVEL.moderator;
 
     if (Object.keys(warnings).length === 0) {
         list.innerHTML = '<p style="color: var(--text-secondary)">No warnings</p>';
@@ -179,7 +222,7 @@ function loadWarnings() {
                     <strong>${escapeHtml(member.name)}</strong>
                     <span style="color: var(--text-secondary)"> — ${warns.length} warning(s)</span>
                 </div>
-                <button class="warning-clear-btn" onclick="clearWarnings('${uid}')">Clear</button>
+                <button class="warning-clear-btn" data-action="clear-warning" data-uid="${escapeHtml(uid)}" ${canClear ? "" : "disabled"}>Clear</button>
             </div>
         `;
     }
@@ -193,27 +236,78 @@ async function clearWarnings(uid) {
     }
 }
 
+async function loadAdminUsers() {
+    if (adminRole !== "admin") return;
+    const result = await adminFetch("/api/admin/users");
+    if (!result) return;
+
+    const list = document.getElementById("admin-users-list");
+    const myUsername = getStoredAdminUsername();
+    list.innerHTML = result.users.map(u => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border);">
+            <div>
+                <strong>${escapeHtml(u.username)}</strong>
+                <span class="rl-role-pill rl-role-pill-${escapeHtml(u.role)}">${escapeHtml(u.role)}</span>
+                <div style="color:var(--text-secondary); font-size:0.8rem;">Last login: ${u.last_login ? new Date(u.last_login).toLocaleString() : "never"}</div>
+            </div>
+            <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.3rem 0.7rem;" data-action="delete-admin-user" data-username="${escapeHtml(u.username)}" ${u.username === myUsername ? "disabled" : ""}>Delete</button>
+        </div>
+    `).join("");
+}
+
+async function deleteAdminUser(username) {
+    if (!confirm(`Delete admin account "${username}"?`)) return;
+    const result = await adminFetch("/api/admin/users/delete", "POST", { username });
+    if (result && result.success) {
+        showToast("Account deleted");
+        loadAdminUsers();
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+}
+
+document.getElementById("create-admin-btn")?.addEventListener("click", async () => {
+    const username = document.getElementById("new-admin-username").value.trim();
+    const password = document.getElementById("new-admin-password").value;
+    const role = document.getElementById("new-admin-role").value;
+    if (!username || !password) {
+        showToast("Enter a username and password!", true);
+        return;
+    }
+    const result = await adminFetch("/api/admin/users/create", "POST", { username, password, role });
+    if (result && result.success) {
+        showToast("Account created!");
+        document.getElementById("new-admin-username").value = "";
+        document.getElementById("new-admin-password").value = "";
+        loadAdminUsers();
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+});
+
 // Login
 document.getElementById("admin-login-btn").addEventListener("click", async () => {
+    const username = document.getElementById("admin-username").value.trim();
     const password = document.getElementById("admin-password").value;
-    if (!password) return;
+    if (!username || !password) return;
 
     try {
-        const res = await fetch(API_BASE + "/api/login", {
+        const res = await fetch(API_BASE + "/api/admin/login", {
             method: "POST",
             headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-            body: JSON.stringify({ password }),
+            body: JSON.stringify({ username, password }),
         });
         const data = await res.json();
 
         if (data.success) {
             adminToken = data.token;
-            storeAdminToken(adminToken);
+            adminRole = data.role;
+            storeAdminSession(data.token, data.role, data.username);
             document.getElementById("login-error").style.display = "none";
             showAdminPanel();
             showToast("Logged in!");
         } else {
-            document.getElementById("login-error").textContent = "Wrong password";
+            document.getElementById("login-error").textContent = data.error || "Wrong username or password";
             document.getElementById("login-error").style.display = "block";
         }
     } catch (e) {
@@ -222,6 +316,9 @@ document.getElementById("admin-login-btn").addEventListener("click", async () =>
     }
 });
 
+document.getElementById("admin-username").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("admin-login-btn").click();
+});
 document.getElementById("admin-password").addEventListener("keydown", (e) => {
     if (e.key === "Enter") document.getElementById("admin-login-btn").click();
 });
@@ -332,15 +429,10 @@ document.getElementById("reset-season-btn").addEventListener("click", async () =
 // Logout
 document.getElementById("admin-logout-btn").addEventListener("click", () => {
     adminToken = null;
+    adminRole = null;
     clearAdminToken();
+    document.getElementById("admin-username").value = "";
     document.getElementById("admin-password").value = "";
     showAdminLogin();
     showToast("Logged out");
 });
-
-// Auto-login if token exists
-if (adminToken) {
-    showAdminPanel();
-} else {
-    showAdminLogin();
-}

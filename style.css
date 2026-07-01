@@ -20,6 +20,10 @@
     --red: #ff4757;
     --blue: #3498db;
     --border: rgba(255, 255, 255, 0.06);
+    --rl-orange: #ff7a1a;
+    --rl-blue: #2f8fe0;
+    --rl-orange-glow: rgba(255, 122, 26, 0.35);
+    --rl-blue-glow: rgba(47, 143, 224, 0.35);
 }
 
 body {
@@ -760,4 +764,228 @@ footer {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Nav avatar dropdown */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.nav-dropdown-trigger:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-dropdown-trigger img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.nav-dropdown-trigger span#nav-username {
+    font-size: 0.85rem;
+}
+
+.nav-dropdown-caret {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+}
+
+.nav-dropdown.dropdown-open .nav-dropdown-caret {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    padding: 0.4rem;
+    z-index: 200;
+}
+
+.nav-dropdown.dropdown-open .nav-dropdown-menu {
+    display: block;
+    animation: fadeIn 0.15s;
+}
+
+.nav-dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.nav-dropdown-item:hover {
+    background: rgba(255, 122, 26, 0.12);
+    color: var(--rl-orange);
+}
+
+/* Rocket League admin zone — diagonal boost-stripe backdrop behind login + panel */
+.rl-admin-zone {
+    position: relative;
+}
+
+.rl-admin-zone::before {
+    content: "";
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(255, 122, 26, 0.05) 0px,
+            rgba(255, 122, 26, 0.05) 2px,
+            transparent 2px,
+            transparent 60px
+        ),
+        repeating-linear-gradient(
+            135deg,
+            rgba(47, 143, 224, 0.05) 30px,
+            rgba(47, 143, 224, 0.05) 32px,
+            transparent 32px,
+            transparent 90px
+        );
+}
+
+.rl-login-card {
+    max-width: 420px;
+    margin: 4rem auto;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+    border: 1px solid rgba(255, 122, 26, 0.25);
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px rgba(47, 143, 224, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--rl-orange-glow);
+    text-align: center;
+}
+
+.rl-login-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--rl-orange);
+    background: rgba(255, 122, 26, 0.12);
+    border: 1px solid rgba(255, 122, 26, 0.3);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+}
+
+.rl-login-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--rl-orange), var(--rl-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.rl-boost-btn {
+    background: linear-gradient(135deg, var(--rl-orange), var(--rl-blue));
+    box-shadow: 0 8px 24px var(--rl-orange-glow);
+}
+
+.rl-boost-btn:hover {
+    box-shadow: 0 8px 30px var(--rl-blue-glow);
+}
+
+.rl-admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.rl-admin-header h1 {
+    background: linear-gradient(135deg, var(--rl-orange), var(--rl-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.rl-role-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 122, 26, 0.3);
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+}
+
+.rl-role-pill {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    margin-left: 0.5rem;
+}
+
+.rl-role-pill-admin {
+    color: var(--rl-orange);
+    background: rgba(255, 122, 26, 0.15);
+}
+
+.rl-role-pill-moderator {
+    color: var(--rl-blue);
+    background: rgba(47, 143, 224, 0.15);
+}
+
+.rl-role-pill-helper {
+    color: var(--silver);
+    background: rgba(192, 192, 192, 0.12);
+}
+
+.card.role-locked {
+    position: relative;
+    opacity: 0.55;
+}
+
+.card.role-locked::after {
+    content: "🔒 Requires a higher role";
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
 }
