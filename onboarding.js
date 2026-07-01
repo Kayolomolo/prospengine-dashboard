@@ -1,5 +1,9 @@
 let onboardingStatus = null;
 
+document.getElementById("gs-main-login-btn")?.addEventListener("click", () => {
+    window.location.href = getLoginUrl();
+});
+
 function gsAuthHeaders() {
     return {
         "Authorization": `Bearer ${discordToken}`,
