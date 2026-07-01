@@ -33,7 +33,9 @@
             <a href="#training" class="nav-link" data-section="training">Training</a>
             <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
             <a href="#tournaments" class="nav-link" data-section="tournaments">Tournaments</a>
-            <div id="nav-user" class="nav-dropdown" style="display:none; margin-left: 0.5rem;">
+        </div>
+        <div class="nav-footer">
+            <div id="nav-user" class="nav-dropdown" style="display:none;">
                 <button id="nav-user-trigger" class="nav-dropdown-trigger" type="button">
                     <img id="nav-avatar" src="" alt="">
                     <span id="nav-username"></span>
@@ -41,10 +43,10 @@
                 </button>
                 <div id="nav-dropdown-menu" class="nav-dropdown-menu">
                     <button type="button" class="nav-dropdown-item" data-action="open-admin-login">🔐 Admin Login</button>
+                    <a href="#" id="logout-btn" class="nav-dropdown-item">Logout</a>
                 </div>
             </div>
             <a href="#" id="login-btn" class="nav-link" style="background:var(--accent);">Login with Discord</a>
-            <a href="#" id="logout-btn" class="nav-link" style="display:none;">Logout</a>
         </div>
     </nav>
 
