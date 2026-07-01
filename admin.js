@@ -36,6 +36,13 @@ const FEATURE_LABELS = {
     "poll": "📊 Polls",
     "warnings": "⚠️ Warnings",
     "weekly": "📅 Weekly Tournament",
+    "birthday": "🎂 Birthdays",
+    "profile": "👤 Profiles",
+    "giveaway": "🎁 Giveaways",
+    "training": "🏋️ Training Packs",
+    "quotes": "💬 Quotes",
+    "leveling": "📈 Leveling",
+    "minigames": "🎲 Minigames",
 };
 
 function showToast(message, isError = false) {

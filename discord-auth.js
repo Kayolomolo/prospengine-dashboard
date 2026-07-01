@@ -260,16 +260,17 @@ async function loadTournaments() {
 }
 
 async function joinTournament(tid) {
-    if (!discordUser) return;
+    if (!discordUser || !discordToken) return;
 
     try {
         const res = await fetch(API + "/api/tournaments/join", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${discordToken}`,
                 "ngrok-skip-browser-warning": "true",
             },
-            body: JSON.stringify({ user_id: discordUser.id, tournament_id: tid }),
+            body: JSON.stringify({ tournament_id: tid }),
         });
         const data = await res.json();
 
@@ -285,16 +286,17 @@ async function joinTournament(tid) {
 }
 
 async function leaveTournament(tid) {
-    if (!discordUser) return;
+    if (!discordUser || !discordToken) return;
 
     try {
         const res = await fetch(API + "/api/tournaments/leave", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${discordToken}`,
                 "ngrok-skip-browser-warning": "true",
             },
-            body: JSON.stringify({ user_id: discordUser.id, tournament_id: tid }),
+            body: JSON.stringify({ tournament_id: tid }),
         });
         const data = await res.json();
 
