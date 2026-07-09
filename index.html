@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ProspEngine — De ultieme Rocket League Discord Bot</title>
+<title>ProspEngine — The ultimate Rocket League Discord Bot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/style.css" />
@@ -13,30 +13,29 @@
 <nav class="nav">
   <div class="wrap">
     <a href="index.html" class="brand">
-      <span class="logo">PE</span>
-      <b>PROSP<span>ENGINE</span></b>
+      <img src="assets/logo.png" alt="ProspEngine" class="brand-logo" />
     </a>
     <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="#features">Features</a>
-      <a href="stats.html">Speler Stats</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="dashboard.html" class="btn btn-primary">Login</a>
+      <a href="index.html" class="active" data-i18n="nav.home">Home</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="stats.html" data-i18n="nav.stats">Player Stats</a>
+      <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+      <button id="langBtn" class="btn btn-ghost" type="button">🌐 NL</button>
+      <a href="dashboard.html" class="btn btn-primary" data-i18n="nav.login">Login</a>
     </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap">
-    <span class="pill"><span class="dot"></span> Nu live · 24/7 online</span>
-    <h1>De ultieme <span class="grad">Rocket League</span><br />Discord Bot</h1>
-    <p class="lead">
-      Toernooien, ELO-ranglijsten, security &amp; complete server-management —
-      ProspEngine tilt jouw Rocket League community naar het volgende level.
+    <span class="pill"><span class="dot"></span> <span data-i18n="hero.pill">Now live · 24/7 online</span></span>
+    <h1 data-i18n="hero.title" data-i18n-html>The ultimate <span class="grad">Rocket League</span><br />Discord Bot</h1>
+    <p class="lead" data-i18n="hero.lead">
+      Tournaments, ELO leaderboards, security &amp; complete server management —
+      ProspEngine takes your Rocket League community to the next level.
     </p>
     <div class="hero-actions">
-      <a href="#" class="btn btn-primary">➕ Voeg toe aan Discord</a>
-      <a href="#features" class="btn btn-ghost">Bekijk features</a>
+      <a href="#features" class="btn btn-primary" data-i18n="hero.viewFeatures">View features</a>
     </div>
     <div class="hero-banner">
       <img src="assets/banner.png" alt="ProspEngine banner" />
@@ -46,41 +45,30 @@
 
 <section class="wrap">
   <div class="stat-strip reveal">
-    <div class="stat"><div class="num" data-count="120">0</div><div class="lbl">Servers</div></div>
-    <div class="stat"><div class="num" data-count="8500">0</div><div class="lbl">Spelers</div></div>
-    <div class="stat"><div class="num" data-count="430">0</div><div class="lbl">Toernooien</div></div>
-    <div class="stat"><div class="num" data-count="99">0</div><div class="lbl">% Uptime</div></div>
+    <div class="stat"><div class="num" data-count="120">0</div><div class="lbl" data-i18n="stat.servers">Servers</div></div>
+    <div class="stat"><div class="num" data-count="8500">0</div><div class="lbl" data-i18n="stat.players">Players</div></div>
+    <div class="stat"><div class="num" data-count="430">0</div><div class="lbl" data-i18n="stat.tournaments">Tournaments</div></div>
+    <div class="stat"><div class="num" data-count="99">0</div><div class="lbl" data-i18n="stat.uptime">% Uptime</div></div>
   </div>
 </section>
 
 <section class="section" id="features">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="eyebrow">Alles-in-één</div>
-      <h2>Krachtige features</h2>
-      <p>Alles wat je nodig hebt om een competitieve Rocket League community te runnen — in één bot.</p>
+      <div class="eyebrow" data-i18n="sec.eyebrow">All-in-one</div>
+      <h2 data-i18n="sec.title">Powerful features</h2>
+      <p data-i18n="sec.sub">Everything you need to run a competitive Rocket League community — in one bot.</p>
     </div>
     <div class="features">
-      <div class="feature reveal"><div class="icon">🛡️</div><h3>Security &amp; Onboarding</h3><p>Captcha-verificatie, raid-detectie, verdachte accounts opsporen en geautomatiseerde onboarding.</p></div>
-      <div class="feature reveal"><div class="icon">⭐</div><h3>Rank Systeem</h3><p>Claim, check &amp; beheer Rocket League ranks met een admin-goedkeuringssysteem.</p></div>
-      <div class="feature reveal"><div class="icon">🏆</div><h3>Toernooien</h3><p>Maak toernooien, gebalanceerde teams, brackets, custom lobbies &amp; automatische voice-channels.</p></div>
-      <div class="feature reveal"><div class="icon">📈</div><h3>ELO &amp; Seizoenen</h3><p>ELO-systeem, leaderboards, seizoensstatistieken &amp; automatische resets.</p></div>
-      <div class="feature reveal"><div class="icon">🎮</div><h3>Fun Commands</h3><p>Clips, challenges, polls, LFG, 1v1-uitdagingen &amp; nog veel meer.</p></div>
-      <div class="feature reveal"><div class="icon">⚙️</div><h3>Server Management</h3><p>Warnings, tickets, logs, custom berichten &amp; geavanceerde instellingen.</p></div>
-      <div class="feature reveal"><div class="icon">📋</div><h3>Automatische Logs</h3><p>Join/leave-logs, security-logs &amp; gedetailleerde activiteitstracking.</p></div>
-      <div class="feature reveal"><div class="icon">📅</div><h3>Wekelijkse Toernooien</h3><p>Stel terugkerende toernooien in met eigen schema's.</p></div>
-      <div class="feature reveal"><div class="icon">🕑</div><h3>Timezones</h3><p>Stel je tijdzone in voor een betere, persoonlijke ervaring.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="wrap">
-  <div class="cta reveal">
-    <h2>Klaar om te domineren?</h2>
-    <p>Voeg ProspEngine toe aan jouw server en geef je community de tools die ze verdienen.</p>
-    <div class="hero-actions">
-      <a href="#" class="btn btn-primary">➕ Voeg toe aan Discord</a>
-      <a href="stats.html" class="btn btn-ghost">Bekijk speler stats</a>
+      <div class="feature reveal"><div class="icon">🛡️</div><h3 data-i18n="f1.t">Security &amp; Onboarding</h3><p data-i18n="f1.d">Captcha verification, raid detection, suspicious account detection and automated onboarding.</p></div>
+      <div class="feature reveal"><div class="icon">⭐</div><h3 data-i18n="f2.t">Rank System</h3><p data-i18n="f2.d">Claim, check &amp; manage Rocket League ranks with an admin approval system.</p></div>
+      <div class="feature reveal"><div class="icon">🏆</div><h3 data-i18n="f3.t">Tournaments</h3><p data-i18n="f3.d">Create tournaments, balanced teams, brackets, custom lobbies &amp; automatic voice channels.</p></div>
+      <div class="feature reveal"><div class="icon">📈</div><h3 data-i18n="f4.t">ELO &amp; Seasons</h3><p data-i18n="f4.d">ELO system, leaderboards, season stats &amp; automatic resets.</p></div>
+      <div class="feature reveal"><div class="icon">🎮</div><h3 data-i18n="f5.t">Fun Commands</h3><p data-i18n="f5.d">Clips, challenges, polls, LFG, 1v1 challenges &amp; much more.</p></div>
+      <div class="feature reveal"><div class="icon">⚙️</div><h3 data-i18n="f6.t">Server Management</h3><p data-i18n="f6.d">Warnings, tickets, logs, custom messages &amp; advanced settings.</p></div>
+      <div class="feature reveal"><div class="icon">📋</div><h3 data-i18n="f7.t">Automated Logs</h3><p data-i18n="f7.d">Join/leave logs, security logs &amp; detailed activity tracking.</p></div>
+      <div class="feature reveal"><div class="icon">📅</div><h3 data-i18n="f8.t">Weekly Tournaments</h3><p data-i18n="f8.d">Set up recurring tournaments with custom schedules.</p></div>
+      <div class="feature reveal"><div class="icon">🕑</div><h3 data-i18n="f9.t">Timezones</h3><p data-i18n="f9.d">Set your timezone for a better, personalized experience.</p></div>
     </div>
   </div>
 </section>
@@ -88,17 +76,18 @@
 <footer class="footer">
   <div class="wrap">
     <div class="owner">
-      <img src="assets/owner-logo.png" alt="KayoloMolo logo" />
+      <img src="assets/owner-logo.png" alt="Kayolomolo logo" />
       <div>
-        <small>Gebouwd met passie door</small>
-        <b>KayoloMolo</b>
+        <small data-i18n="footer.builtby">Built with passion by</small>
+        <b>Kayolomolo</b>
       </div>
     </div>
-    <div class="muted">© 2026 ProspEngine · Powered by Community</div>
+    <div class="muted" data-i18n="footer.copyright">© 2026 ProspEngine · Powered by Community</div>
   </div>
 </footer>
 
 <script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

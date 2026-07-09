@@ -1,7 +1,8 @@
-/* ===== ProspEngine — front-end logic (live API) ===== */
+/* ===== ProspEngine — front-end logic (live API, EN/NL) ===== */
 const API = window.PROSP_API || "";
+const T = (k) => (window.t ? window.t(k) : k);
 
-/* ---------- kleine helpers ---------- */
+/* ---------- API helpers ---------- */
 async function apiGet(path, token) {
   const headers = {};
   if (token) headers.Authorization = "Bearer " + token;
@@ -23,16 +24,15 @@ const initials = (n) => (n || "?").slice(0, 2).toUpperCase();
 const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
 }, { threshold: 0.12 });
-function observeReveals() { document.querySelectorAll(".reveal:not(.in)").forEach((el) => io.observe(el)); }
-observeReveals();
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
 /* ---------- Count-up ---------- */
 function countUp(el, target) {
   let cur = 0; const step = Math.max(1, target / 60);
   const tick = () => {
     cur += step;
-    if (cur >= target) { el.textContent = target.toLocaleString("nl-NL"); return; }
-    el.textContent = Math.floor(cur).toLocaleString("nl-NL");
+    if (cur >= target) { el.textContent = target.toLocaleString(); return; }
+    el.textContent = Math.floor(cur).toLocaleString();
     requestAnimationFrame(tick);
   };
   tick();
@@ -74,32 +74,31 @@ if (stripEls.length) {
     ];
     stripEls.forEach((el, i) => countUp(el, vals[i] ?? 0));
   }).catch(() => {
-    // API onbereikbaar → toon 0 zonder de pagina te breken
     stripEls.forEach((el) => (el.textContent = "—"));
   });
 }
 
 /* =====================================================
-   FEATURE-DEFINITIES (moeten matchen met data.json "features")
+   FEATURE-IDS (moeten matchen met data.json "features")
 ===================================================== */
-const FEATURE_DEFS = [
-  { id: "verificatie", icon: "🛡️", name: "Verificatie & Onboarding", desc: "Captcha & beveiligde toegang" },
-  { id: "rank",        icon: "⭐",  name: "Rank Systeem",             desc: "Claim & beheer RL-ranks" },
-  { id: "toernooi",    icon: "🏆", name: "Toernooien",               desc: "Brackets, teams & lobbies" },
-  { id: "elo",         icon: "📈", name: "ELO & Seizoenen",          desc: "Ranglijst & seizoensstats" },
-  { id: "weekly",      icon: "📅", name: "Wekelijkse Toernooien",    desc: "Terugkerende schema's" },
-  { id: "lfg",         icon: "🎮", name: "LFG",                      desc: "Zoek teamgenoten" },
-  { id: "clips",       icon: "🎬", name: "Clips",                    desc: "Deel je beste momenten" },
-  { id: "challenge",   icon: "⚔️", name: "Challenges",               desc: "1v1 & uitdagingen" },
-  { id: "poll",        icon: "📊", name: "Polls",                    desc: "Stemmen in de server" },
-  { id: "warnings",    icon: "⚠️", name: "Warnings",                 desc: "Moderatie & waarschuwingen" },
-  { id: "birthday",    icon: "🎂", name: "Verjaardagen",             desc: "Automatische felicitaties" },
-  { id: "profile",     icon: "🪪", name: "Profielen",                desc: "Speler-profielkaarten" },
-  { id: "giveaway",    icon: "🎁", name: "Giveaways",                desc: "Prijzen weggeven" },
-  { id: "training",    icon: "🎯", name: "Training Packs",           desc: "Deel training-codes" },
-  { id: "quotes",      icon: "💬", name: "Quotes",                   desc: "Legendarische uitspraken" },
-  { id: "leveling",    icon: "🆙", name: "Leveling",                 desc: "XP & levels verdienen" },
-  { id: "minigames",   icon: "🕹️", name: "Minigames",                desc: "Fun in je server" },
+const FEATURE_IDS = [
+  { id: "verificatie", icon: "🛡️" },
+  { id: "rank",        icon: "⭐" },
+  { id: "toernooi",    icon: "🏆" },
+  { id: "elo",         icon: "📈" },
+  { id: "weekly",      icon: "📅" },
+  { id: "lfg",         icon: "🎮" },
+  { id: "clips",       icon: "🎬" },
+  { id: "challenge",   icon: "⚔️" },
+  { id: "poll",        icon: "📊" },
+  { id: "warnings",    icon: "⚠️" },
+  { id: "birthday",    icon: "🎂" },
+  { id: "profile",     icon: "🪪" },
+  { id: "giveaway",    icon: "🎁" },
+  { id: "training",    icon: "🎯" },
+  { id: "quotes",      icon: "💬" },
+  { id: "leveling",    icon: "🆙" },
+  { id: "minigames",   icon: "🕹️" },
 ];
 
 /* =====================================================
@@ -114,13 +113,13 @@ if (loginView) {
 
   function renderToggles(features) {
     grid.innerHTML = "";
-    FEATURE_DEFS.forEach((f) => {
+    FEATURE_IDS.forEach((f) => {
       const on = features[f.id] !== false; // default aan
       const card = document.createElement("div");
       card.className = "toggle-card" + (on ? " on" : "");
       card.innerHTML = `
         <div class="t-icon">${f.icon}</div>
-        <div class="t-body"><b>${f.name}</b><small>${f.desc}</small></div>
+        <div class="t-body"><b>${T("feat." + f.id + ".t")}</b><small>${T("feat." + f.id + ".d")}</small></div>
         <label class="switch">
           <input type="checkbox" data-id="${f.id}" ${on ? "checked" : ""}/>
           <span class="slider"></span>
@@ -130,9 +129,15 @@ if (loginView) {
     grid.querySelectorAll("input").forEach((inp) => {
       inp.addEventListener("change", () => {
         inp.closest(".toggle-card").classList.toggle("on", inp.checked);
-        document.getElementById("saveStatus").textContent = "Niet-opgeslagen wijzigingen…";
+        document.getElementById("saveStatus").textContent = T("dash.saveStatusUnsaved");
       });
     });
+  }
+
+  function currentFeatureState() {
+    const f = {};
+    grid.querySelectorAll("input").forEach((inp) => { f[inp.dataset.id] = inp.checked; });
+    return f;
   }
 
   async function openDashboard() {
@@ -144,18 +149,23 @@ if (loginView) {
       renderToggles(s.features || {});
     } catch (err) {
       if (String(err).includes("401")) { logout(); return; }
-      grid.innerHTML = `<p style="color:var(--muted)">Kon instellingen niet laden: ${err}</p>`;
+      grid.innerHTML = `<p style="color:var(--muted)">${T("dash.loadError")}${err}</p>`;
     }
   }
 
   if (token) openDashboard();
+
+  // taalwissel: toggles opnieuw tekenen met behoud van standen
+  document.addEventListener("langchange", () => {
+    if (grid && grid.querySelector("input")) renderToggles(currentFeatureState());
+  });
 
   document.getElementById("loginBtn").addEventListener("click", async () => {
     const username = document.getElementById("serverId").value.trim();
     const pass = document.getElementById("pass").value;
     const err = document.getElementById("loginError");
     const btn = document.getElementById("loginBtn");
-    err.textContent = ""; btn.textContent = "Bezig…"; btn.disabled = true;
+    err.textContent = ""; btn.textContent = T("dash.loggingIn"); btn.disabled = true;
     try {
       const res = await apiPost("/api/admin/login", { username, password: pass });
       token = res.token;
@@ -165,7 +175,7 @@ if (loginView) {
     } catch (e) {
       err.textContent = String(e).replace("Error: ", "");
     } finally {
-      btn.textContent = "🔓 Inloggen"; btn.disabled = false;
+      btn.textContent = T("dash.loginBtn"); btn.disabled = false;
     }
   });
   document.getElementById("pass").addEventListener("keydown", (e) => {
@@ -173,14 +183,12 @@ if (loginView) {
   });
 
   document.getElementById("saveBtn").addEventListener("click", async () => {
-    const features = {};
-    grid.querySelectorAll("input").forEach((inp) => { features[inp.dataset.id] = inp.checked; });
     const btn = document.getElementById("saveBtn");
     btn.disabled = true;
     try {
-      await apiPost("/api/features", { features }, token);
-      document.getElementById("saveStatus").textContent = "Alle wijzigingen opgeslagen ✓";
-      showToast("✅ Opgeslagen — je bot is bijgewerkt!");
+      await apiPost("/api/features", { features: currentFeatureState() }, token);
+      document.getElementById("saveStatus").textContent = T("dash.saveStatusSaved");
+      showToast(T("dash.toastSaved"));
     } catch (e) {
       showToast("⚠️ " + String(e).replace("Error: ", ""));
     } finally { btn.disabled = false; }
@@ -199,10 +207,6 @@ if (searchInput) {
   const lb = document.getElementById("leaderboard");
   let PLAYERS = [];
 
-  function avatarHTML(p, size) {
-    if (p.avatar) return `<img src="${p.avatar}" alt="" style="width:${size}px;height:${size}px;border-radius:${size > 50 ? 20 : 9}px;object-fit:cover" />`;
-    return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${size / 2.4}px">${initials(p.name)}</div>`;
-  }
   const ratio = (p) => { const g = p.wins + p.losses; return g ? Math.round((p.wins / g) * 100) : 0; };
 
   function renderPlayer(p) {
@@ -220,21 +224,21 @@ if (searchInput) {
         </div>
         <div style="margin-left:auto;text-align:right">
           <div style="font-size:34px;font-weight:900;color:var(--blue-bright)">${p.elo}</div>
-          <div style="color:var(--muted);font-size:13px">ELO Rating</div>
+          <div style="color:var(--muted);font-size:13px">${T("stats.eloRating")}</div>
         </div>
       </div>
       <div class="player-grid">
-        <div class="mini-stat"><div class="v green">${p.wins}</div><div class="k">Wins</div></div>
-        <div class="mini-stat"><div class="v red">${p.losses}</div><div class="k">Losses</div></div>
-        <div class="mini-stat"><div class="v blue">Lvl ${p.level}</div><div class="k">Level</div></div>
-        <div class="mini-stat"><div class="v">${p.tournaments_won}</div><div class="k">Toernooien</div></div>
+        <div class="mini-stat"><div class="v green">${p.wins}</div><div class="k">${T("stats.winsLabel")}</div></div>
+        <div class="mini-stat"><div class="v red">${p.losses}</div><div class="k">${T("stats.losses")}</div></div>
+        <div class="mini-stat"><div class="v blue">Lvl ${p.level}</div><div class="k">${T("stats.level")}</div></div>
+        <div class="mini-stat"><div class="v">${p.tournaments_won}</div><div class="k">${T("stats.tournaments")}</div></div>
       </div>
       <div class="bar-row">
-        <div class="bar-label"><span>Win-ratio</span><span>${r}%</span></div>
+        <div class="bar-label"><span>${T("stats.winrate")}</span><span>${r}%</span></div>
         <div class="bar-track"><div class="bar-fill" style="width:${r}%"></div></div>
       </div>
       <div class="bar-row">
-        <div class="bar-label"><span>XP naar volgend level</span><span>${p.xp} XP</span></div>
+        <div class="bar-label"><span>${T("stats.xpToNext")}</span><span>${p.xp} ${T("stats.xp")}</span></div>
         <div class="bar-track"><div class="bar-fill" style="width:${Math.min(p.xp % 100, 100)}%"></div></div>
       </div>
     </div>`;
@@ -246,7 +250,7 @@ if (searchInput) {
     const p = PLAYERS.find((x) => x.name.toLowerCase().includes(q));
     resultBox.innerHTML = p
       ? renderPlayer(p)
-      : `<div class="player-card"><p style="text-align:center;color:var(--muted)">Geen speler gevonden voor "<b>${searchInput.value}</b>".</p></div>`;
+      : `<div class="player-card"><p style="text-align:center;color:var(--muted)">${T("stats.notFound")} "<b>${searchInput.value}</b>".</p></div>`;
   }
   document.getElementById("searchBtn").addEventListener("click", search);
   searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
@@ -272,6 +276,11 @@ if (searchInput) {
     });
   }
 
+  // taalwissel: leaderboard + spelerkaart opnieuw tekenen
+  document.addEventListener("langchange", () => {
+    if (PLAYERS.length) { buildLeaderboard(); if (searchInput.value.trim()) search(); }
+  });
+
   apiGet("/api/data").then((d) => {
     const members = d.members || {};
     const seasonNo = String(d.season?.number ?? "1");
@@ -286,13 +295,13 @@ if (searchInput) {
       };
     });
     if (!PLAYERS.length) {
-      resultBox.innerHTML = `<div class="player-card"><p style="text-align:center;color:var(--muted)">Nog geen spelers in de database. Speel een match in Discord en ze verschijnen hier! 🎮</p></div>`;
+      resultBox.innerHTML = `<div class="player-card"><p style="text-align:center;color:var(--muted)">${T("stats.noPlayers")}</p></div>`;
       return;
     }
     buildLeaderboard();
     searchInput.value = PLAYERS.slice().sort((a, b) => b.elo - a.elo)[0].name;
     search();
   }).catch((err) => {
-    resultBox.innerHTML = `<div class="player-card"><p style="text-align:center;color:var(--muted)">Kon geen verbinding maken met de bot.<br /><small>${err}</small></p></div>`;
+    resultBox.innerHTML = `<div class="player-card"><p style="text-align:center;color:var(--muted)">${T("stats.noConnection")}<br /><small>${err}</small></p></div>`;
   });
 }
