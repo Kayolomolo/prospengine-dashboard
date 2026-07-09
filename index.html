@@ -601,6 +601,31 @@
                     <div id="warnings-list"></div>
                 </div>
 
+                <div class="card" data-min-role="admin">
+                    <h2>🧩 Server Layouts</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Ontwerp hier hoe je server eruit moet zien. Sla het op onder een naam, en typ dan in Discord <strong>/setup-layout</strong> om het meteen zo neer te zetten.</p>
+
+                    <div id="layouts-list" style="margin-bottom: 1.5rem;"></div>
+
+                    <div class="layout-editor">
+                        <div class="admin-row">
+                            <div style="flex:1;">
+                                <label>Layout-naam</label>
+                                <input type="text" id="layout-name" class="admin-input" placeholder="bijv. Mijn RL Server">
+                            </div>
+                        </div>
+
+                        <div id="layout-categories"></div>
+
+                        <button id="add-category-btn" class="admin-btn" style="width:auto; margin-top:0.5rem; background:var(--bg-card-hover);">➕ Categorie toevoegen</button>
+
+                        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                            <button id="save-layout-btn" class="admin-btn rl-boost-btn" style="flex:1;">💾 Layout opslaan</button>
+                            <button id="clear-layout-btn" class="admin-btn" style="width:auto; background:var(--text-secondary);">Leegmaken</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card" id="manage-admins-card" style="display:none;">
                     <h2>👥 Manage Admins</h2>
                     <p style="color: var(--text-secondary); margin-bottom: 1rem;">Give friends their own login — Admin sees everything, Moderator can manage almost everything, Helper can view but not change settings.</p>

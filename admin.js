@@ -108,7 +108,10 @@ function showAdminPanel() {
     showSection("admin");
     loadSettings();
     applyRoleGating();
-    if (adminRole === "admin") loadAdminUsers();
+    if (adminRole === "admin") {
+        loadAdminUsers();
+        loadLayouts();
+    }
 }
 
 function applyRoleGating() {
@@ -327,6 +330,175 @@ document.getElementById("create-admin-btn")?.addEventListener("click", async () 
         document.getElementById("new-admin-password").value = "";
         document.getElementById("new-admin-discord-id").value = "";
         loadAdminUsers();
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+});
+
+// ===== Server Layouts builder =====
+let layoutState = [];          // [{ name, channels: [{name, type, visibility}] }]
+let editingLayoutName = null;  // set when editing an existing layout (so save can rename-in-place logic)
+
+const VIS_OPTIONS = [
+    { value: "everyone", label: "🌍 Iedereen" },
+    { value: "verified", label: "✅ Alleen verified" },
+    { value: "staff", label: "🔒 Alleen staff" },
+];
+
+async function loadLayouts() {
+    if (adminRole !== "admin") return;
+    renderLayoutEditor();
+    const result = await adminFetch("/api/layouts");
+    if (!result) return;
+    const list = document.getElementById("layouts-list");
+    const layouts = result.layouts || [];
+    if (layouts.length === 0) {
+        list.innerHTML = `<p style="color:var(--text-secondary);">Nog geen layouts opgeslagen. Ontwerp er hieronder één.</p>`;
+        return;
+    }
+    list.innerHTML = layouts.map(l => {
+        const cats = l.categories.length;
+        const chans = l.categories.reduce((n, c) => n + c.channels.length, 0);
+        return `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border);">
+                <div>
+                    <strong>${escapeHtml(l.name)}</strong>
+                    <div style="color:var(--text-secondary); font-size:0.8rem;">${cats} categorieën · ${chans} kanalen</div>
+                </div>
+                <div style="display:flex; gap:0.4rem;">
+                    <button class="admin-btn" style="width:auto; padding:0.3rem 0.7rem;" data-action="edit-layout" data-name="${escapeHtml(l.name)}">Bewerken</button>
+                    <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.3rem 0.7rem;" data-action="delete-layout" data-name="${escapeHtml(l.name)}">Verwijderen</button>
+                </div>
+            </div>`;
+    }).join("");
+    // Stash for edit — avoids a second fetch
+    window._layoutsCache = layouts;
+}
+
+function renderLayoutEditor() {
+    const container = document.getElementById("layout-categories");
+    if (layoutState.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-secondary); margin:0.5rem 0;">Nog geen categorieën. Klik hieronder om er één toe te voegen.</p>`;
+        return;
+    }
+    container.innerHTML = layoutState.map((cat, ci) => `
+        <div class="layout-cat" data-cat-index="${ci}">
+            <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
+                <input class="admin-input layout-cat-name" style="margin:0; font-weight:600;" value="${escapeHtml(cat.name)}" placeholder="Categorie-naam (bijv. 💬 COMMUNITY)">
+                <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.4rem 0.7rem;" data-action="layout-remove-category" data-cat-index="${ci}">🗑️</button>
+            </div>
+            <div class="layout-channels" style="padding-left:1rem;">
+                ${cat.channels.map((ch, chi) => `
+                    <div class="layout-ch" data-ch-index="${chi}" style="display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;">
+                        <input class="admin-input layout-ch-name" style="margin:0; flex:2;" value="${escapeHtml(ch.name)}" placeholder="kanaalnaam">
+                        <select class="admin-input layout-ch-type" style="margin:0; flex:1;">
+                            <option value="text" ${ch.type === "text" ? "selected" : ""}># Tekst</option>
+                            <option value="voice" ${ch.type === "voice" ? "selected" : ""}>🔊 Voice</option>
+                        </select>
+                        <select class="admin-input layout-ch-visibility" style="margin:0; flex:1;">
+                            ${VIS_OPTIONS.map(o => `<option value="${o.value}" ${ch.visibility === o.value ? "selected" : ""}>${o.label}</option>`).join("")}
+                        </select>
+                        <button class="admin-btn admin-btn-danger" style="width:auto; padding:0.4rem 0.6rem;" data-action="layout-remove-channel" data-cat-index="${ci}" data-ch-index="${chi}">✖</button>
+                    </div>
+                `).join("")}
+                <button class="admin-btn" style="width:auto; padding:0.3rem 0.7rem; background:var(--bg-card-hover); font-size:0.85rem;" data-action="layout-add-channel" data-cat-index="${ci}">➕ Kanaal</button>
+            </div>
+        </div>
+    `).join("");
+}
+
+// Read the current input values back into layoutState (called before any structural change or save,
+// so typed-but-not-yet-saved values aren't lost when we re-render).
+function syncLayoutFromDOM() {
+    const catEls = document.querySelectorAll("#layout-categories .layout-cat");
+    catEls.forEach((catEl, ci) => {
+        if (!layoutState[ci]) return;
+        layoutState[ci].name = catEl.querySelector(".layout-cat-name").value;
+        const chEls = catEl.querySelectorAll(".layout-ch");
+        chEls.forEach((chEl, chi) => {
+            if (!layoutState[ci].channels[chi]) return;
+            layoutState[ci].channels[chi].name = chEl.querySelector(".layout-ch-name").value;
+            layoutState[ci].channels[chi].type = chEl.querySelector(".layout-ch-type").value;
+            layoutState[ci].channels[chi].visibility = chEl.querySelector(".layout-ch-visibility").value;
+        });
+    });
+}
+
+function layoutAddCategory() {
+    syncLayoutFromDOM();
+    layoutState.push({ name: "", channels: [] });
+    renderLayoutEditor();
+}
+function layoutRemoveCategory(ci) {
+    syncLayoutFromDOM();
+    layoutState.splice(ci, 1);
+    renderLayoutEditor();
+}
+function layoutAddChannel(ci) {
+    syncLayoutFromDOM();
+    layoutState[ci].channels.push({ name: "", type: "text", visibility: "verified" });
+    renderLayoutEditor();
+}
+function layoutRemoveChannel(ci, chi) {
+    syncLayoutFromDOM();
+    layoutState[ci].channels.splice(chi, 1);
+    renderLayoutEditor();
+}
+
+function editLayout(name) {
+    const layout = (window._layoutsCache || []).find(l => l.name === name);
+    if (!layout) return;
+    editingLayoutName = name;
+    document.getElementById("layout-name").value = layout.name;
+    layoutState = JSON.parse(JSON.stringify(layout.categories));
+    renderLayoutEditor();
+    document.querySelector(".layout-editor").scrollIntoView({ behavior: "smooth" });
+}
+
+async function deleteLayout(name) {
+    if (!confirm(`Layout "${name}" verwijderen?`)) return;
+    const result = await adminFetch("/api/layouts/delete", "POST", { name });
+    if (result && result.success) {
+        showToast("Layout verwijderd");
+        if (editingLayoutName === name) clearLayoutEditor();
+        loadLayouts();
+    } else if (result && result.error) {
+        showToast(result.error, true);
+    }
+}
+
+function clearLayoutEditor() {
+    editingLayoutName = null;
+    layoutState = [];
+    document.getElementById("layout-name").value = "";
+    renderLayoutEditor();
+}
+
+document.getElementById("add-category-btn")?.addEventListener("click", layoutAddCategory);
+document.getElementById("clear-layout-btn")?.addEventListener("click", clearLayoutEditor);
+
+document.getElementById("save-layout-btn")?.addEventListener("click", async () => {
+    syncLayoutFromDOM();
+    const name = document.getElementById("layout-name").value.trim();
+    if (!name) { showToast("Geef de layout een naam!", true); return; }
+    if (layoutState.length === 0) { showToast("Voeg minstens één categorie toe!", true); return; }
+
+    // Trim + drop empty entries so the backend doesn't reject blank names
+    const categories = layoutState
+        .map(c => ({
+            name: c.name.trim(),
+            channels: c.channels.map(ch => ({ name: ch.name.trim(), type: ch.type, visibility: ch.visibility }))
+                               .filter(ch => ch.name),
+        }))
+        .filter(c => c.name);
+
+    if (categories.length === 0) { showToast("Elke categorie heeft een naam nodig!", true); return; }
+
+    const result = await adminFetch("/api/layouts/save", "POST", { name, categories });
+    if (result && result.success) {
+        showToast(`Layout "${result.name}" opgeslagen! Typ /setup-layout in Discord om hem toe te passen.`);
+        editingLayoutName = result.name;
+        loadLayouts();
     } else if (result && result.error) {
         showToast(result.error, true);
     }

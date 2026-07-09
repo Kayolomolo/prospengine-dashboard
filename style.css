@@ -1014,6 +1014,20 @@ footer {
     background: rgba(192, 192, 192, 0.12);
 }
 
+/* Server layout builder */
+.layout-cat {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.layout-cat .layout-ch .admin-input {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+}
+
 /* Mobile nav: collapse the sidebar into a slide-in drawer instead of
    permanently reserving 220px on a narrow screen. */
 .mobile-nav-toggle {

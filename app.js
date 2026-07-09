@@ -469,6 +469,16 @@ document.addEventListener("click", (e) => {
         editAdminUser(el.dataset.username);
     } else if (action === "reset-admin-user-password") {
         resetAdminUserPassword(el.dataset.username);
+    } else if (action === "edit-layout") {
+        editLayout(el.dataset.name);
+    } else if (action === "delete-layout") {
+        deleteLayout(el.dataset.name);
+    } else if (action === "layout-add-channel") {
+        layoutAddChannel(parseInt(el.dataset.catIndex));
+    } else if (action === "layout-remove-channel") {
+        layoutRemoveChannel(parseInt(el.dataset.catIndex), parseInt(el.dataset.chIndex));
+    } else if (action === "layout-remove-category") {
+        layoutRemoveCategory(parseInt(el.dataset.catIndex));
     } else if (action === "open-admin-login") {
         if (typeof closeNavDropdown === "function") closeNavDropdown();
         closeMobileNav();
