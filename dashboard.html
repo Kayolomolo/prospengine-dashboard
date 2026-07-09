@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ProspEngine — Server Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="logo">PE</span>
+      <b>PROSP<span>ENGINE</span></b>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="stats.html">Speler Stats</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="#" id="logoutBtn" class="btn btn-ghost" style="display:none">Uitloggen</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== LOGIN VIEW ===== -->
+<div id="loginView" class="auth-wrap">
+  <div class="auth-card">
+    <div class="logo-big">PE</div>
+    <h2>Server Login</h2>
+    <p class="sub">Alleen voor server-eigenaren. Log in om je bot te beheren.</p>
+    <div class="field">
+      <label for="serverId">E-mail / gebruikersnaam</label>
+      <input type="text" id="serverId" placeholder="jouw@email.com" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label for="pass">Wachtwoord</label>
+      <input type="password" id="pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="btn btn-primary" id="loginBtn">🔓 Inloggen</button>
+    <div class="error-msg" id="loginError"></div>
+    <p class="auth-hint">Gebruik je ProspEngine admin-account.</p>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD VIEW ===== -->
+<main id="dashView" class="wrap" style="display:none">
+  <div class="dash-head">
+    <div>
+      <h1>Server Dashboard</h1>
+      <p>Ingelogd op server <b id="serverLabel">demo</b> · schakel features aan of uit.</p>
+    </div>
+    <a href="#" class="btn btn-ghost" id="logoutBtn2">Uitloggen</a>
+  </div>
+
+  <div class="toggle-grid" id="toggleGrid"><!-- filled by JS --></div>
+
+  <div class="save-bar">
+    <span id="saveStatus">Alle wijzigingen worden lokaal opgeslagen.</span>
+    <button class="btn btn-primary" id="saveBtn">💾 Instellingen opslaan</button>
+  </div>
+</main>
+
+<div class="toast" id="toast">Opgeslagen!</div>
+
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

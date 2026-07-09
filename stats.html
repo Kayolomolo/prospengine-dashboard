@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ProspEngine — Speler Stats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="logo">PE</span>
+      <b>PROSP<span>ENGINE</span></b>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="stats.html" class="active">Speler Stats</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html" class="btn btn-primary">Login</a>
+    </div>
+  </div>
+</nav>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Statistieken</div>
+      <h2>Speler Stats</h2>
+      <p>Zoek een speler en bekijk ELO, rank, win-ratio en meer.</p>
+    </div>
+
+    <div class="search-box reveal">
+      <input type="text" id="playerSearch" placeholder="Zoek een speler… (probeer: KayoloMolo)" />
+      <button class="btn btn-primary" id="searchBtn">Zoek</button>
+    </div>
+
+    <div id="playerResult"></div>
+
+    <div class="section-head reveal" style="margin-top:70px">
+      <div class="eyebrow">Top spelers</div>
+      <h2>Leaderboard</h2>
+    </div>
+
+    <div class="lb reveal" id="leaderboard">
+      <div class="lb-row head">
+        <div>#</div><div>Speler</div><div>ELO</div><div class="col-hide">Wins</div><div>Ratio</div>
+      </div>
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="owner">
+      <img src="assets/owner-logo.png" alt="KayoloMolo logo" />
+      <div>
+        <small>Gebouwd met passie door</small>
+        <b>KayoloMolo</b>
+      </div>
+    </div>
+    <div class="muted">© 2026 ProspEngine · Powered by Community</div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

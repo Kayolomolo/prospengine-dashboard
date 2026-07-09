@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src https://fonts.gstatic.com;
+        img-src 'self' data: https://cdn.discordapp.com;
+        connect-src 'self' https://discord.com https://*.apps.bot-hosting.cloud https://*.ngrok-free.dev https://*.ngrok-free.app https://raw.githubusercontent.com http://localhost:8080;
+        frame-ancestors 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
+    <title>ProspEngine Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle" type="button" aria-label="Open menu">☰</button>
+    <div id="nav-backdrop" class="nav-backdrop"></div>
+    <nav>
+        <div class="nav-brand">
+            <span class="logo">🚀</span>
+            <span class="brand-name">ProspEngine</span>
+        </div>
+        <div class="nav-links">
+            <a href="#get-started" class="nav-link" data-section="get-started" style="background: var(--accent);">🚀 Get Started</a>
+            <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
+            <a href="#leaderboard" class="nav-link" data-section="leaderboard">Leaderboard</a>
+            <a href="#players" class="nav-link" data-section="players">Players</a>
+            <a href="#training" class="nav-link" data-section="training">Training</a>
+            <a href="#quotes" class="nav-link" data-section="quotes">Quotes</a>
+            <a href="#tournaments" class="nav-link" data-section="tournaments">Tournaments</a>
+        </div>
+        <div class="nav-footer">
+            <div id="nav-user" class="nav-dropdown" style="display:none;">
+                <button id="nav-user-trigger" class="nav-dropdown-trigger" type="button">
+                    <img id="nav-avatar" src="" alt="">
+                    <span id="nav-username"></span>
+                    <span class="nav-dropdown-caret">▾</span>
+                </button>
+                <div id="nav-dropdown-menu" class="nav-dropdown-menu">
+                    <button type="button" class="nav-dropdown-item" data-action="open-admin-login">🔐 Admin Login</button>
+                    <a href="#" id="logout-btn" class="nav-dropdown-item">Logout</a>
+                </div>
+            </div>
+            <a href="#" id="login-btn" class="nav-link" style="background:var(--accent);">Login with Discord</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Get Started / Onboarding Section -->
+        <section id="get-started" class="section">
+            <h1>🚀 Get Started</h1>
+
+            <div id="gs-login-required" class="card" style="max-width: 500px; margin: 2rem auto; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">👋</div>
+                <h2>Welcome! Let's get you set up.</h2>
+                <p style="color: var(--text-secondary); margin: 1rem 0;">Login with Discord to start your onboarding.</p>
+                <button id="gs-main-login-btn" class="admin-btn">Login with Discord</button>
+            </div>
+
+            <div id="gs-flow" style="display:none; max-width: 700px; margin: 0 auto;">
+                <div class="gs-progress">
+                    <div class="gs-step" id="gs-progress-1">1. Rules</div>
+                    <div class="gs-step" id="gs-progress-2">2. Profile</div>
+                    <div class="gs-step" id="gs-progress-3">3. Verify</div>
+                </div>
+
+                <!-- Step 1: Rules -->
+                <div id="gs-step-rules" class="card gs-card">
+                    <h2 id="gs-rules-title">📋 Server Rules</h2>
+                    <div id="gs-rules-text" class="gs-rules-text"></div>
+                    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1.5rem;">
+                        <input type="checkbox" id="gs-rules-checkbox" style="width:18px;height:18px;">
+                        I have read and agree to the server rules
+                    </label>
+                    <button id="gs-rules-next" class="admin-btn" style="margin-top:1rem;" disabled>Continue →</button>
+                </div>
+
+                <!-- Step 2: Profile setup -->
+                <div id="gs-step-profile" class="card gs-card" style="display:none;">
+                    <h2>⚙️ Set Up Your Profile</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Both steps are required to continue.</p>
+
+                    <div class="gs-substep">
+                        <h3>🕐 Timezone <span id="gs-tz-check"></span></h3>
+                        <select id="gs-timezone-select" class="admin-input">
+                            <option value="">Choose your timezone...</option>
+                            <option value="CEST">🇳🇱 Netherlands / Belgium (CEST)</option>
+                            <option value="Europe/London">🇬🇧 United Kingdom (BST)</option>
+                            <option value="Europe/Berlin">🇩🇪 Germany (CEST)</option>
+                            <option value="EDT">🇺🇸 US Eastern (EDT)</option>
+                            <option value="CDT">🇺🇸 US Central (CDT)</option>
+                            <option value="MDT">🇺🇸 US Mountain (MDT)</option>
+                            <option value="PDT">🇺🇸 US Pacific (PDT)</option>
+                            <option value="JST">🇯🇵 Japan (JST)</option>
+                            <option value="AEST">🇦🇺 Australia (AEST)</option>
+                            <option value="UTC">🌍 UTC</option>
+                        </select>
+                        <button id="gs-save-timezone" class="admin-btn" style="margin-top:0.75rem;">Save Timezone</button>
+                    </div>
+
+                    <div class="gs-substep" style="margin-top:1.5rem;">
+                        <h3>🏅 Rocket League Rank <span id="gs-rank-check"></span></h3>
+                        <select id="gs-rank-select" class="admin-input">
+                            <option value="">Choose your rank...</option>
+                            <option value="Supersonic Legend">Supersonic Legend</option>
+                            <option value="Grand Champion III">Grand Champion III</option>
+                            <option value="Grand Champion II">Grand Champion II</option>
+                            <option value="Grand Champion I">Grand Champion I</option>
+                            <option value="Champion III">Champion III</option>
+                            <option value="Champion II">Champion II</option>
+                            <option value="Champion I">Champion I</option>
+                            <option value="Diamond III">Diamond III</option>
+                            <option value="Diamond II">Diamond II</option>
+                            <option value="Diamond I">Diamond I</option>
+                            <option value="Platinum III">Platinum III</option>
+                            <option value="Platinum II">Platinum II</option>
+                            <option value="Platinum I">Platinum I</option>
+                            <option value="Gold III">Gold III</option>
+                            <option value="Gold II">Gold II</option>
+                            <option value="Gold I">Gold I</option>
+                            <option value="Silver III">Silver III</option>
+                            <option value="Silver II">Silver II</option>
+                            <option value="Silver I">Silver I</option>
+                            <option value="Bronze III">Bronze III</option>
+                            <option value="Bronze II">Bronze II</option>
+                            <option value="Bronze I">Bronze I</option>
+                            <option value="Unranked">Unranked</option>
+                        </select>
+                        <input type="text" id="gs-epic-name" class="admin-input" placeholder="Your Epic Games username" style="margin-top:0.5rem;">
+                        <button id="gs-save-rank" class="admin-btn" style="margin-top:0.75rem;">Submit Rank Request</button>
+                        <p style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">An admin will verify your rank.</p>
+                    </div>
+
+                    <button id="gs-profile-next" class="admin-btn" style="margin-top:1.5rem;" disabled>Continue →</button>
+                </div>
+
+                <!-- Step 3: Captcha verification -->
+                <div id="gs-step-verify" class="card gs-card" style="display:none;">
+                    <h2>🔒 Final Step — Verify Yourself</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Solve the captcha below to complete verification.</p>
+                    <img id="gs-captcha-img" src="" style="border-radius:8px; margin-bottom:1rem; max-width:100%;">
+                    <br>
+                    <button id="gs-new-captcha" class="admin-btn" style="width:auto; padding:0.5rem 1rem; margin-bottom:1rem;">🔄 New Captcha</button>
+                    <input type="text" id="gs-captcha-answer" class="admin-input" placeholder="Enter the code">
+                    <button id="gs-submit-captcha" class="admin-btn" style="margin-top:0.75rem;">Verify</button>
+                    <p id="gs-captcha-error" style="color: var(--red); margin-top:0.5rem; display:none;"></p>
+                </div>
+
+                <!-- Step 4: Optional roles -->
+                <div id="gs-step-optional" class="card gs-card" style="display:none;">
+                    <h2>✨ Optional Roles</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Completely optional — you can always change these later in #optional-roles or with /optional-roles.</p>
+
+                    <div class="gs-substep">
+                        <h3>🔔 Tournament Announcements</h3>
+                        <label style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="checkbox" id="gs-announce-checkbox" style="width:18px;height:18px;">
+                            Ping me when a new tournament is posted
+                        </label>
+                    </div>
+
+                    <div class="gs-substep" style="margin-top:1rem;">
+                        <h3>🌍 Languages</h3>
+                        <p style="color: var(--text-secondary); font-size:0.85rem; margin-bottom:0.5rem;">Select all languages you speak</p>
+                        <div id="gs-language-checkboxes" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.5rem;"></div>
+                    </div>
+
+                    <div class="gs-substep" style="margin-top:1rem;">
+                        <h3>🎮 Platform</h3>
+                        <p style="color: var(--text-secondary); font-size:0.85rem; margin-bottom:0.5rem;">Select all platforms you play on</p>
+                        <div id="gs-platform-checkboxes" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.5rem;"></div>
+                    </div>
+
+                    <button id="gs-save-optional" class="admin-btn" style="margin-top:1.5rem;">Save & Continue →</button>
+                    <button id="gs-skip-optional" class="admin-btn" style="margin-top:0.5rem; background:var(--text-secondary);">Skip for now</button>
+                </div>
+
+                <!-- Done -->
+                <div id="gs-step-done" class="card gs-card" style="display:none; text-align:center;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+                    <h2>You're verified!</h2>
+                    <p style="color: var(--text-secondary); margin-top:0.5rem;">Welcome to the server! You now have full access on Discord.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="overview" class="section active">
+            <div class="server-header">
+                <img id="server-icon" src="" alt="Server Icon" class="server-icon">
+                <div>
+                    <h1 id="server-name">Loading...</h1>
+                    <p id="server-members" class="subtitle">— members</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="stat-season">—</div>
+                    <div class="stat-label">Current Season</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="stat-members">—</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-value" id="stat-matches">—</div>
+                    <div class="stat-label">Matches Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="stat-avg-elo">—</div>
+                    <div class="stat-label">Avg ELO</div>
+                </div>
+            </div>
+
+            <div class="card" id="my-tournaments-card" style="display:none;">
+                <h2>🎮 Your Tournaments</h2>
+                <div id="my-tournaments-list"></div>
+            </div>
+
+            <div class="card">
+                <h2>🏅 Top 5 Players</h2>
+                <div id="top5-list" class="top-list"></div>
+            </div>
+
+            <div class="card">
+                <h2>💬 Latest Quote</h2>
+                <div id="latest-quote" class="quote-display"></div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="section">
+            <h1>🏆 ELO Leaderboard — Season <span id="lb-season">—</span></h1>
+            <div class="card">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>ELO</th>
+                            <th>Rank</th>
+                            <th>W/L</th>
+                            <th>Winrate</th>
+                            <th>Tournaments Won</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+
+            <h2 class="mt">📈 Level Leaderboard</h2>
+            <div class="card">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Level</th>
+                            <th>XP</th>
+                            <th>Level Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="level-leaderboard-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Players Section -->
+        <section id="players" class="section">
+            <h1>👥 Players</h1>
+            <div class="search-bar">
+                <input type="text" id="player-search" placeholder="Search players...">
+            </div>
+            <div id="players-grid" class="players-grid"></div>
+        </section>
+
+        <!-- Training Section -->
+        <section id="training" class="section">
+            <h1>🏋️ Training Packs</h1>
+            <div id="training-list" class="training-grid"></div>
+        </section>
+
+        <!-- Quotes Section -->
+        <section id="quotes" class="section">
+            <h1>💬 Quotes Wall</h1>
+            <div id="quotes-list" class="quotes-grid"></div>
+        </section>
+        <!-- Tournaments Section -->
+        <section id="tournaments" class="section">
+            <h1>🏆 Tournaments</h1>
+            <p class="subtitle" style="margin-bottom: 1.5rem;" id="tournament-login-msg">Login with Discord to join tournaments!</p>
+
+            <div id="create-tournament-card" class="card" style="display: none; margin-bottom: 1.5rem;">
+                <h2>➕ Create New Tournament</h2>
+                <div class="admin-form">
+                    <label>Tournament Name</label>
+                    <input type="text" id="new-tournament-name" class="admin-input" placeholder="e.g. Friday Night Cup">
+                    <div class="admin-row">
+                        <div>
+                            <label>Gamemode</label>
+                            <select id="new-tournament-gamemode" class="admin-input">
+                                <option value="1">1v1</option>
+                                <option value="2" selected>2v2</option>
+                                <option value="3">3v3</option>
+                                <option value="4">4v4</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Max Players</label>
+                            <input type="number" id="new-tournament-maxplayers" class="admin-input" min="2" max="64" value="8">
+                        </div>
+                        <div>
+                            <label>Start Date</label>
+                            <input type="date" id="new-tournament-date" class="admin-input">
+                        </div>
+                        <div>
+                            <label>Start Time</label>
+                            <input type="time" id="new-tournament-time" class="admin-input">
+                        </div>
+                        <div>
+                            <label>Teams</label>
+                            <select id="new-tournament-autoteams" class="admin-input">
+                                <option value="true">Bot creates balanced teams</option>
+                                <option value="false">Teams already assigned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:0.75rem;">
+                        <input type="checkbox" id="new-tournament-weekly" style="width:18px;height:18px;">
+                        🔁 Repeat weekly (a new sign-up post will be created automatically every week)
+                    </label>
+                    <button id="create-tournament-btn" class="admin-btn" style="margin-top: 1rem;">🏆 Create Tournament</button>
+                </div>
+            </div>
+
+            <div id="tournaments-list"></div>
+        </section>
+
+        <!-- Admin Section -->
+        <!-- Admin Login Section -->
+        <section id="admin-login" class="section rl-admin-zone">
+            <div class="rl-login-card" id="admin-login-step">
+                <div class="rl-login-badge">RESTRICTED ACCESS</div>
+                <h2>🔐 Admin Login</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Sign in with your ProspEngine staff account.</p>
+                <input type="text" id="admin-username" placeholder="Username" class="admin-input" autocomplete="username">
+                <input type="password" id="admin-password" placeholder="Password" class="admin-input" autocomplete="current-password">
+                <button id="admin-login-btn" class="admin-btn rl-boost-btn">Login</button>
+                <p id="login-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="show-forgot-password-btn" class="rl-link-btn">Forgot password?</button>
+            </div>
+
+            <div class="rl-login-card" id="admin-forgot-step1" style="display:none;">
+                <div class="rl-login-badge">PASSWORD RESET</div>
+                <h2>🔑 Forgot Password</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your username — if your account has a Discord account linked, you'll get a reset code by DM.</p>
+                <input type="text" id="forgot-username" placeholder="Username" class="admin-input" autocomplete="username">
+                <button type="button" id="send-reset-code-btn" class="admin-btn rl-boost-btn">Send Reset Code</button>
+                <p id="forgot-step1-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <p id="forgot-step1-success" style="color: var(--green); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="back-to-login-btn-1" class="rl-link-btn">Back to login</button>
+            </div>
+
+            <div class="rl-login-card" id="admin-forgot-step2" style="display:none;">
+                <div class="rl-login-badge">PASSWORD RESET</div>
+                <h2>📨 Enter Reset Code</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Check your Discord DMs for the 6-digit code we just sent.</p>
+                <input type="text" id="reset-code" placeholder="6-digit code" class="admin-input" maxlength="6">
+                <input type="password" id="reset-new-password" placeholder="New password (min. 8 characters)" class="admin-input" autocomplete="new-password">
+                <button type="button" id="submit-reset-code-btn" class="admin-btn rl-boost-btn">Reset Password</button>
+                <p id="forgot-step2-error" style="color: var(--red); margin-top: 0.5rem; display: none;"></p>
+                <button type="button" id="back-to-login-btn-2" class="rl-link-btn">Back to login</button>
+            </div>
+        </section>
+
+        <!-- Admin Panel Section -->
+        <section id="admin" class="section rl-admin-zone">
+            <div id="admin-panel">
+                <div class="rl-admin-header">
+                    <h1>⚙️ Admin Panel</h1>
+                    <span id="admin-role-label" class="rl-role-badge"></span>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🔧 Features</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Toggle bot features on or off.</p>
+                    <div id="features-grid" class="features-grid"></div>
+                    <button id="save-features-btn" class="admin-btn" style="margin-top: 1rem;">Save Features</button>
+                </div>
+
+                <div class="card" data-min-role="moderator">
+                    <h2>📅 Weekly Tournament</h2>
+                    <div class="admin-form">
+                        <label>
+                            <input type="checkbox" id="weekly-enabled"> Enabled
+                        </label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Day</label>
+                                <select id="weekly-day" class="admin-input">
+                                    <option value="0">Monday</option>
+                                    <option value="1">Tuesday</option>
+                                    <option value="2">Wednesday</option>
+                                    <option value="3">Thursday</option>
+                                    <option value="4">Friday</option>
+                                    <option value="5">Saturday</option>
+                                    <option value="6">Sunday</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Hour (UTC)</label>
+                                <input type="number" id="weekly-hour" class="admin-input" min="0" max="23" value="20">
+                            </div>
+                            <div>
+                                <label>Gamemode</label>
+                                <select id="weekly-gamemode" class="admin-input">
+                                    <option value="1">1v1</option>
+                                    <option value="2">2v2</option>
+                                    <option value="3">3v3</option>
+                                    <option value="4">4v4</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Max Players</label>
+                                <input type="number" id="weekly-maxplayers" class="admin-input" min="2" max="64" value="12">
+                            </div>
+                        </div>
+                        <button id="save-weekly-btn" class="admin-btn" style="margin-top: 1rem;">Save Weekly Settings</button>
+                    </div>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🔒 Verification</h2>
+                    <div class="admin-form">
+                        <label>Verification Method</label>
+                        <select id="verify-method" class="admin-input">
+                            <option value="captcha">Captcha</option>
+                            <option value="button">Button Click</option>
+                        </select>
+                        <div class="admin-row">
+                            <div>
+                                <label>Captcha Length</label>
+                                <input type="number" id="verify-length" class="admin-input" min="4" max="8" value="6">
+                            </div>
+                            <div>
+                                <label>Difficulty</label>
+                                <select id="verify-difficulty" class="admin-input">
+                                    <option value="easy">Easy (numbers only)</option>
+                                    <option value="medium">Medium (letters & numbers)</option>
+                                    <option value="hard">Hard (mixed case)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Max Attempts</label>
+                                <input type="number" id="verify-attempts" class="admin-input" min="1" max="10" value="3">
+                            </div>
+                            <div>
+                                <label>Timeout (seconds)</label>
+                                <input type="number" id="verify-timeout" class="admin-input" min="60" max="600" value="300">
+                            </div>
+                        </div>
+                        <button id="save-verify-btn" class="admin-btn" style="margin-top: 1rem;">Save Verification Settings</button>
+                    </div>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🛡️ Anti-Nuke</h2>
+                    <div class="admin-form">
+                        <label><input type="checkbox" id="antinuke-enabled"> Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Ban Limit</label>
+                                <input type="number" id="antinuke-ban-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Kick Limit</label>
+                                <input type="number" id="antinuke-kick-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Channel Delete Limit</label>
+                                <input type="number" id="antinuke-channel-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                            <div>
+                                <label>Role Delete Limit</label>
+                                <input type="number" id="antinuke-role-limit" class="admin-input" min="1" max="10" value="2">
+                            </div>
+                        </div>
+                        <label>Punishment</label>
+                        <select id="antinuke-punishment" class="admin-input">
+                            <option value="ban">Ban</option>
+                            <option value="kick">Kick</option>
+                            <option value="clear_roles">Remove All Roles</option>
+                        </select>
+                        <h3 style="margin-top: 1rem;">🐉 Beast Mode</h3>
+                        <label><input type="checkbox" id="beast-enabled"> Beast Mode Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Score Limit</label>
+                                <input type="number" id="beast-score-limit" class="admin-input" min="10" max="100" value="25">
+                            </div>
+                            <div>
+                                <label>Duration (minutes)</label>
+                                <input type="number" id="beast-duration" class="admin-input" min="10" max="1440" value="60">
+                            </div>
+                            <div>
+                                <label>Beast Punishment</label>
+                                <select id="beast-punishment" class="admin-input">
+                                    <option value="ban">Ban</option>
+                                    <option value="kick">Kick</option>
+                                    <option value="clear_roles">Remove All Roles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="save-antinuke-btn" class="admin-btn" style="margin-top: 1rem;">Save Anti-Nuke Settings</button>
+                    </div>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🛡️ Anti-Raid</h2>
+                    <div class="admin-form">
+                        <label><input type="checkbox" id="antiraid-enabled"> Enabled</label>
+                        <div class="admin-row">
+                            <div>
+                                <label>Score Limit</label>
+                                <input type="number" id="antiraid-score-limit" class="admin-input" min="10" max="200" value="50">
+                            </div>
+                            <div>
+                                <label>No Avatar Score</label>
+                                <input type="number" id="antiraid-avatar-score" class="admin-input" min="0" max="50" value="5">
+                            </div>
+                            <div>
+                                <label>Account Age Score</label>
+                                <input type="number" id="antiraid-age-score" class="admin-input" min="0" max="50" value="5">
+                            </div>
+                            <div>
+                                <label>Join Row Score</label>
+                                <input type="number" id="antiraid-joinrow-score" class="admin-input" min="0" max="50" value="10">
+                            </div>
+                        </div>
+                        <div class="admin-row">
+                            <div>
+                                <label>Age Bypass (days)</label>
+                                <input type="number" id="antiraid-age-bypass" class="admin-input" min="1" max="365" value="180">
+                            </div>
+                            <div>
+                                <label>Join Row Threshold (sec)</label>
+                                <input type="number" id="antiraid-joinrow-threshold" class="admin-input" min="1" max="30" value="5">
+                            </div>
+                            <div>
+                                <label>Punishment</label>
+                                <select id="antiraid-punishment" class="admin-input">
+                                    <option value="ban">Ban</option>
+                                    <option value="kick">Kick</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Ban Duration (days)</label>
+                                <input type="number" id="antiraid-ban-days" class="admin-input" min="1" max="30" value="2">
+                            </div>
+                        </div>
+                        <div class="admin-row">
+                            <div>
+                                <label>Lock Duration (hours)</label>
+                                <input type="number" id="antiraid-lock-hours" class="admin-input" min="1" max="24" value="2">
+                            </div>
+                            <div>
+                                <label>Score Reset (minutes)</label>
+                                <input type="number" id="antiraid-reset-mins" class="admin-input" min="1" max="60" value="10">
+                            </div>
+                        </div>
+                        <button id="save-antiraid-btn" class="admin-btn" style="margin-top: 1rem;">Save Anti-Raid Settings</button>
+                    </div>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🔄 Season</h2>
+                    <div class="admin-row" style="margin-bottom: 1rem;">
+                        <div>
+                            <label>Season Number</label>
+                            <input type="number" id="admin-season-number" class="admin-input" min="1" value="1">
+                        </div>
+                    </div>
+                    <button id="save-season-btn" class="admin-btn" style="margin-bottom: 0.5rem;">Set Season Number</button>
+                    <button id="reset-season-btn" class="admin-btn admin-btn-danger">Reset ELO & Start New Season</button>
+                </div>
+
+                <div class="card">
+                    <h2>⚠️ Warnings</h2>
+                    <div id="warnings-list"></div>
+                </div>
+
+                <div class="card" data-min-role="admin">
+                    <h2>🧩 Server Layouts</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Ontwerp hier hoe je server eruit moet zien. Sla het op onder een naam, en typ dan in Discord <strong>/setup-layout</strong> om het meteen zo neer te zetten.</p>
+
+                    <div id="layouts-list" style="margin-bottom: 1.5rem;"></div>
+
+                    <div class="layout-editor">
+                        <div class="admin-row">
+                            <div style="flex:1;">
+                                <label>Layout-naam</label>
+                                <input type="text" id="layout-name" class="admin-input" placeholder="bijv. Mijn RL Server">
+                            </div>
+                        </div>
+
+                        <div id="layout-categories"></div>
+
+                        <button id="add-category-btn" class="admin-btn" style="width:auto; margin-top:0.5rem; background:var(--bg-card-hover);">➕ Categorie toevoegen</button>
+
+                        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                            <button id="save-layout-btn" class="admin-btn rl-boost-btn" style="flex:1;">💾 Layout opslaan</button>
+                            <button id="clear-layout-btn" class="admin-btn" style="width:auto; background:var(--text-secondary);">Leegmaken</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="manage-admins-card" style="display:none;">
+                    <h2>👥 Manage Admins</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Give friends their own login — Admin sees everything, Moderator can manage almost everything, Helper can view but not change settings.</p>
+                    <div id="admin-users-list"></div>
+                    <div class="admin-row" style="margin-top: 1rem;">
+                        <div>
+                            <label>Username</label>
+                            <input type="text" id="new-admin-username" class="admin-input" placeholder="username">
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <input type="password" id="new-admin-password" class="admin-input" placeholder="min. 8 characters">
+                        </div>
+                        <div>
+                            <label>Role</label>
+                            <select id="new-admin-role" class="admin-input">
+                                <option value="helper">Helper</option>
+                                <option value="moderator">Moderator</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Discord User ID (optional)</label>
+                            <input type="text" id="new-admin-discord-id" class="admin-input" placeholder="for password reset via DM">
+                        </div>
+                    </div>
+                    <button id="create-admin-btn" class="admin-btn" style="margin-top: 1rem;">Create Account</button>
+                </div>
+
+                <button id="admin-logout-btn" class="admin-btn" style="margin-top: 1rem; background: var(--text-secondary);">Logout</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by <strong>ProspEngine</strong> — Team Prosperity 🚀</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="admin.js"></script>
+    <script src="discord-auth.js"></script>
+    <script src="onboarding.js"></script>
+</body>
+</html>
