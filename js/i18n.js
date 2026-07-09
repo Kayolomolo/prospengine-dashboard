@@ -187,7 +187,7 @@ function applyI18n() {
     el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph")));
   });
   const b = document.getElementById("langBtn");
-  if (b) b.textContent = LANG === "en" ? "🌐 NL" : "🌐 EN";
+  if (b) b.textContent = LANG === "en" ? "🌐 EN" : "🌐 NL";
   document.dispatchEvent(new CustomEvent("langchange"));
 }
 
