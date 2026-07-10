@@ -251,6 +251,27 @@ img { max-width: 100%; display: block; }
 .server-bar .sb-select:focus { outline: none; border-color: var(--blue); }
 .server-bar #logoutBtn { margin-left: auto; }
 
+/* ===== Stats server-badge + deel-link ===== */
+.stats-server-badge {
+  display: inline-flex; align-items: center; gap: 10px; margin: 0 auto 26px;
+  padding: 9px 18px; border-radius: 999px; font-weight: 800; font-size: 16px;
+  background: rgba(70,130,255,0.12); border: 1px solid var(--border-strong);
+  width: fit-content;
+}
+.stats-server-badge img { width: 26px; height: 26px; border-radius: 50%; }
+.section .wrap > .stats-server-badge { display: flex; }
+.share-link {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 22px; backdrop-filter: blur(8px);
+}
+.share-link .share-label { color: var(--muted); font-size: 14px; font-weight: 600; }
+.share-link .share-input {
+  flex: 1; min-width: 220px; padding: 10px 13px; border-radius: 10px;
+  background: rgba(5,10,25,0.6); border: 1px solid var(--border); color: var(--text);
+  font-family: inherit; font-size: 13.5px;
+}
+
 /* ===== Dashboard ===== */
 .dash-head { padding: 40px 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 .dash-head h1 { font-size: 30px; font-weight: 900; letter-spacing: -.5px; }

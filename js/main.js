@@ -170,9 +170,27 @@ if (dashView && document.getElementById("toggleGrid")) {
     return f;
   };
 
+  function renderShareLink(gid) {
+    const el = document.getElementById("shareLink");
+    if (!el) return;
+    if (!gid) { el.style.display = "none"; return; }
+    const url = `${location.origin}${location.pathname.replace(/dashboard\.html$/, "stats.html")}?server=${gid}`;
+    el.style.display = "";
+    el.innerHTML = `<span class="share-label">${T("dash.shareLabel")}</span>
+      <input class="share-input" id="shareInput" readonly value="${url}" />
+      <button class="btn btn-ghost" id="copyShareBtn">${T("dash.copy")}</button>`;
+    document.getElementById("copyShareBtn").addEventListener("click", () => {
+      const inp = document.getElementById("shareInput");
+      inp.select();
+      navigator.clipboard?.writeText(inp.value);
+      showToast(T("dash.copied"));
+    });
+  }
+
   async function loadServer(gid) {
     currentGuild = gid;
     const saveBar = document.querySelector(".save-bar");
+    renderShareLink(gid);
     if (!gid) { grid.innerHTML = `<p style="color:var(--muted)">${T("dash.pickServer")}</p>`; if (saveBar) saveBar.style.display = "none"; return; }
     if (saveBar) saveBar.style.display = "";
     grid.innerHTML = `<p style="color:var(--muted)">${T("auth.loading")}</p>`;
@@ -283,7 +301,14 @@ if (searchInput) {
     showStatsUI(true);
     resultBox.innerHTML = "";
     try {
-      const d = await publicGet(withGuild("/api/data"));
+      const d = await publicGet(`/api/data?guild=${encodeURIComponent(gid)}`);
+      const badge = document.getElementById("statsServerBadge");
+      if (badge) {
+        badge.innerHTML = d.server?.icon
+          ? `<img src="${d.server.icon}" alt="" /> ${d.server?.name || ""}`
+          : `🎮 ${d.server?.name || ""}`;
+        badge.style.display = d.server?.name ? "" : "none";
+      }
       const members = d.members || {};
       const seasonNo = String(d.season?.number ?? "1");
       const ss = (d.season_stats || {})[seasonNo] || {};
@@ -306,5 +331,13 @@ if (searchInput) {
     }
   }
 
-  initServerBar("serverBar", loadServer);
+  // Publieke per-server link: stats.html?server=<guildId> toont direct die server (geen login/kiezer).
+  const urlServer = new URLSearchParams(location.search).get("server");
+  if (urlServer) {
+    const bar = document.getElementById("serverBar");
+    if (bar) bar.style.display = "none";
+    loadServer(urlServer);
+  } else {
+    initServerBar("serverBar", loadServer);
+  }
 }

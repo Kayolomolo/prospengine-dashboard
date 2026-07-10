@@ -67,6 +67,9 @@ window.I18N = {
     "dash.loadError": "Could not load settings: ",
     "dash.subtitle": "Log in with Discord and manage your server's features.",
     "dash.pickServer": "Choose a server above to manage its features.",
+    "dash.shareLabel": "Public stats link for this server:",
+    "dash.copy": "Copy",
+    "dash.copied": "📋 Link copied!",
 
     "auth.login": "🎮 Login with Discord",
     "auth.logout": "Log out",
@@ -161,6 +164,9 @@ window.I18N = {
     "dash.loadError": "Kon instellingen niet laden: ",
     "dash.subtitle": "Log in met Discord en beheer de features van je server.",
     "dash.pickServer": "Kies hierboven een server om de features te beheren.",
+    "dash.shareLabel": "Publieke stats-link voor deze server:",
+    "dash.copy": "Kopieer",
+    "dash.copied": "📋 Link gekopieerd!",
 
     "auth.login": "🎮 Inloggen met Discord",
     "auth.logout": "Uitloggen",
