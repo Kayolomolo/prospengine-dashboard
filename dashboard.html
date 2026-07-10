@@ -19,44 +19,24 @@
       <a href="index.html" data-i18n="nav.home">Home</a>
       <a href="stats.html" data-i18n="nav.stats">Player Stats</a>
       <a href="dashboard.html" class="active" data-i18n="nav.dashboard">Dashboard</a>
-      <button id="langBtn" class="btn btn-ghost" type="button">🌐 NL</button>
+      <button id="langBtn" class="btn btn-ghost" type="button">🌐 EN</button>
     </div>
   </div>
 </nav>
 
-<!-- ===== LOGIN VIEW ===== -->
-<div id="loginView" class="auth-wrap">
-  <div class="auth-card">
-    <div class="logo-big">PE</div>
-    <h2 data-i18n="dash.loginTitle">Server Login</h2>
-    <p class="sub" data-i18n="dash.loginSub">For server owners only. Log in to manage your bot.</p>
-    <div class="field">
-      <label for="serverId" data-i18n="dash.userLabel">Email / username</label>
-      <input type="text" id="serverId" data-i18n-ph="dash.userPh" placeholder="you@email.com" autocomplete="username" />
-    </div>
-    <div class="field">
-      <label for="pass" data-i18n="dash.passLabel">Password</label>
-      <input type="password" id="pass" placeholder="••••••••" autocomplete="current-password" />
-    </div>
-    <button class="btn btn-primary" id="loginBtn" data-i18n="dash.loginBtn">🔓 Log in</button>
-    <div class="error-msg" id="loginError"></div>
-    <p class="auth-hint" data-i18n="dash.hint">Use your ProspEngine admin account.</p>
-  </div>
-</div>
-
-<!-- ===== DASHBOARD VIEW ===== -->
-<main id="dashView" class="wrap" style="display:none">
+<main id="dashView" class="wrap">
   <div class="dash-head">
     <div>
       <h1 data-i18n="dash.title">Server Dashboard</h1>
-      <p><span data-i18n="dash.subPre">Logged in on </span><b id="serverLabel">server</b><span data-i18n="dash.subPost"> · toggle features on or off.</span></p>
+      <p data-i18n="dash.subtitle">Log in with Discord and manage your server's features.</p>
     </div>
-    <a href="#" class="btn btn-ghost" id="logoutBtn2" data-i18n="dash.logout">Log out</a>
   </div>
+
+  <div class="server-bar" id="serverBar"></div>
 
   <div class="toggle-grid" id="toggleGrid"></div>
 
-  <div class="save-bar">
+  <div class="save-bar" style="display:none">
     <span id="saveStatus" data-i18n="dash.saveStatus">Changes are saved to your bot.</span>
     <button class="btn btn-primary" id="saveBtn" data-i18n="dash.saveBtn">💾 Save settings</button>
   </div>
@@ -66,6 +46,7 @@
 
 <script src="js/config.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

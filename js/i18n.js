@@ -65,6 +65,16 @@ window.I18N = {
     "dash.loggingIn": "Working…",
     "dash.toastSaved": "✅ Saved — your bot has been updated!",
     "dash.loadError": "Could not load settings: ",
+    "dash.subtitle": "Log in with Discord and manage your server's features.",
+    "dash.pickServer": "Choose a server above to manage its features.",
+
+    "auth.login": "🎮 Login with Discord",
+    "auth.logout": "Log out",
+    "auth.loginPrompt": "Log in with Discord to manage your servers.",
+    "auth.loading": "Loading…",
+    "auth.server": "Server:",
+    "auth.noServers": "You don't manage any servers where ProspEngine is active.",
+    "stats.loginPrompt": "Log in with Discord and pick a server to view its stats.",
 
     "feat.verificatie.t": "Verification & Onboarding", "feat.verificatie.d": "Captcha & secured access",
     "feat.rank.t": "Rank System", "feat.rank.d": "Claim & manage RL ranks",
@@ -149,6 +159,16 @@ window.I18N = {
     "dash.loggingIn": "Bezig…",
     "dash.toastSaved": "✅ Opgeslagen — je bot is bijgewerkt!",
     "dash.loadError": "Kon instellingen niet laden: ",
+    "dash.subtitle": "Log in met Discord en beheer de features van je server.",
+    "dash.pickServer": "Kies hierboven een server om de features te beheren.",
+
+    "auth.login": "🎮 Inloggen met Discord",
+    "auth.logout": "Uitloggen",
+    "auth.loginPrompt": "Log in met Discord om je servers te beheren.",
+    "auth.loading": "Laden…",
+    "auth.server": "Server:",
+    "auth.noServers": "Je beheert geen servers waar ProspEngine actief is.",
+    "stats.loginPrompt": "Log in met Discord en kies een server om de stats te zien.",
 
     "feat.verificatie.t": "Verificatie & Onboarding", "feat.verificatie.d": "Captcha & beveiligde toegang",
     "feat.rank.t": "Rank Systeem", "feat.rank.d": "Claim & beheer RL-ranks",
